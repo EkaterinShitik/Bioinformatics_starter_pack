@@ -189,7 +189,7 @@ The programm is based on `select_fastq` function that takes the dictionary of nu
 
 To start with the program run the following command:
 
-`select_fastq(seqs, gc_bounds=(40,100), length_bounds=(10,100), quality_threshold=10)`
+`select_fastq(seqs, gc_bounds=..., length_bounds=..., quality_threshold=...)`
 
 Where:
 - seqs - the dictionary of nucleotide fragments in FASTQ format
@@ -224,7 +224,9 @@ Without full names use arguments in a certain order
 
 Example: 
 
-`select_fastq(seqs, (0,100), (0,200), 0)`  # *the* *same* *as* `select_fastq(seqs, gc_bounds=(0,100), length_bounds=(0,200), quality_threshold=0)`
+`select_fastq(seqs, (0,100), (0,200), 0)`  # *the* *same* *as* 
+
+`select_fastq(seqs, gc_bounds=(0,100), length_bounds=(0,200), quality_threshold=0)`
              
              
 In case of changing only one argument, provide its full name!
@@ -235,26 +237,26 @@ Before start, check the *Options* and *Examples*.
 
 
 ### Options
-The program has five types of functions, for more information please see provided docstrings:
 
-- `transcribe` — print transcribed sequence*
-- `reverse` — print reversed sequence
-- `complement` — print complementary sequence
-- `reverse_complement` — print reversed complementary sequence
-- `gc_count` — count *GC*-content in percentage
-  
-\* Reverse transcription is also taken into account (from RNA to DNA)
+There are three functions that are used in the main function:
+    
+- is_in_gc_bounds(seq, gc_bounds) - takes a sequence in *string* type and check if the sequence falls in the range of GC-content bounds
+- is_in_length_bounds(seq, length_bounds) - takes a sequence in *string* type and check if the sequence falls in the range of length bounds
+- is_above_quality_threshold(quality_scores, quality_threshold) - takes a quality values in *string* type and check if the mean of quality values exceeds the quality threshold
     
 ### Examples
 
 ```python
-run_dna_rna_tools('ATG', func='transcribe') # 'AUG'
-run_dna_rna_tools('ATG', func='reverse') # 'GTA'
-run_dna_rna_tools('AtG', func='complement') # 'TaC'
-run_dna_rna_tools('ATg', func='reverse_complement') # 'cAT'
-run_dna_rna_tools('ATG', 'aT', func='reverse') # ['GTA', 'Ta']
-run_dna_rna_tools('ATGgGCCtAA', func='gc_count') # '50.0%'
-run_dna_rna_tools('ATTg', 'AuUgG', func='gc_count') # ['25.0%', '40.0%']
+example = {'@SRX079804:1:SRR292678:1:1101:21885:21885': ('ACAGCAACATAAACATGATGGGATGGCGTAAGCCCCCGAGATATCAGTTTACCCAGGATAAGAGATTAAATTATGAGCAACATTATTAA',
+  'FGGGFGGGFGGGFGDFGCEBB@CCDFDDFFFFBFFGFGEFDFFFF;D@DD>C@DDGGGDFGDGG?GFGFEGFGGEF@FDGGGFGFBGGD'),
+ '@SRX079804:1:SRR292678:1:1101:24563:24563': ('ATTAGCGAGGAGGAGTGCTGAGAAGATGTCGCCTACGCCGTTGAAATTCCCTTCAATCAGGGGGTACTGGAGGATACGAGTTTGTGTG',
+  'BFFFFFFFB@B@A<@D>BDDACDDDEBEDEFFFBFFFEFFDFFF=CC@DDFD8FFFFFFF8/+.2,@7<<:?B/:<><-><@.A*C>D')}
+
+select_fastq(example, gc_bounds=(40,60))
+# Output:
+# {'@SRX079804:1:SRR292678:1:1101:24563:24563':
+# ('ATTAGCGAGGAGGAGTGCTGAGAAGATGTCGCCTACGCCGTTGAAATTCCCTTCAATCAGGGGGTACTGGAGGATACGAGTTTGTGTG',
+#  'BFFFFFFFB@B@A<@D>BDDACDDDEBEDEFFFBFFFEFFDFFF=CC@DDFD8FFFFFFF8/+.2,@7<<:?B/:<><-><@.A*C>D')}
 ```
 
 ### Troubleshooting
