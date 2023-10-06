@@ -109,4 +109,10 @@ def is_rna(seq: str) -> bool:
     """
     return set(seq) <= set('AaGgCcUu')
 
-is_rna('AGCT')
+FUNCTIONS_NA = {
+        'transcribe': transcribe,
+        'reverse': reverse,
+        'complement': complement,
+        'reverse_complement': reverse_complement,
+        'gc_count': gc_count
+        }
