@@ -1,4 +1,112 @@
-import dictionaries 
+AMINO_ACIDS = {
+    'A': 'Ala',
+    'C': 'Cys',
+    'D': 'Asp',
+    'E': 'Glu',
+    'F': 'Phe',
+    'G': 'Gly',
+    'H': 'His',
+    'I': 'Ile',
+    'K': 'Lys',
+    'L': 'Leu',
+    'M': 'Met',
+    'N': 'Asn',
+    'P': 'Pro',
+    'Q': 'Gln',
+    'R': 'Arg',
+    'S': 'Ser',
+    'T': 'Thr',
+    'V': 'Val',
+    'W': 'Trp',
+    'Y': 'Tyr',
+    'a': 'ala',
+    'c': 'cys',
+    'd': 'asp',
+    'e': 'glu',
+    'f': 'phe',
+    'g': 'gly',
+    'h': 'his',
+    'i': 'ile',
+    'k': 'lys',
+    'l': 'leu',
+    'm': 'met',
+    'n': 'asn',
+    'p': 'pro',
+    'q': 'gln',
+    'r': 'arg',
+    's': 'ser',
+    't': 'thr',
+    'v': 'val',
+    'w': 'trp',
+    'y': 'tyr',
+}
+TRANSLATION_CODE = {
+    'F': 'UUU',
+    'f': 'uuu',
+    'L': 'CUG',
+    'l': 'cug',
+    'I': 'AUU',
+    'i': 'auu',
+    'M': 'AUG',
+    'm': 'aug',
+    'V': 'GUG',
+    'v': 'gug',
+    'P': 'CCG',
+    'p': 'ccg',
+    'T': 'ACC',
+    't': 'acc',
+    'A': 'GCG',
+    'a': 'gcg',
+    'Y': 'UAU',
+    'y': 'uau',
+    'H': 'CAU',
+    'h': 'cau',
+    'Q': 'CAG',
+    'q': 'cag',
+    'N': 'AAC',
+    'n': 'aac',
+    'K': 'AAA',
+    'k': 'aaa',
+    'D': 'GAU',
+    'd': 'gau',
+    'E': 'GAA',
+    'e': 'gaa',
+    'C': 'UGC',
+    'c': 'ugc',
+    'W': 'UGG',
+    'w': 'ugg',
+    'R': 'CGU',
+    'r': 'cgu',
+    'S': 'AGC',
+    's': 'agc',
+    'G': 'GGC',
+    'g': 'ggc',
+} 
+AMINO_ACID_WEIGHT = {
+    'A': 89.09,
+    'C': 121.16,
+    'D': 133.10,
+    'E': 147.13,
+    'F': 165.19,
+    'G': 75.07,
+    'H': 155.16,
+    'I': 131.17,
+    'K': 146.19,
+    'L': 131.17,
+    'M': 149.21,
+    'N': 132.12,
+    'P': 115.13,
+    'Q': 146.15,
+    'R': 174.20,
+    'S': 105.09,
+    'T': 119.12,
+    'V': 117.15,
+    'W': 204.23,
+    'Y': 181.19,
+}
+RULE_OF_TRANSCRIPTION = 'AUCG'.maketrans('UuTt', 'TtUu')
+RULE_OF_TRANSLATION = 'MTW'.maketrans(TRANSLATION_CODE)
+
 
 def three_one_letter_code(sequences: str) -> list:
     """
@@ -25,7 +133,7 @@ def three_one_letter_code(sequences: str) -> list:
         if "-" not in sequence:
             inversed_sequence = []
             for letter in sequence:
-                inversed_letter = dictionaries.AMINO_ACIDS[letter]
+                inversed_letter = AMINO_ACIDS[letter]
                 inversed_sequence += [inversed_letter]
             inversed_sequence = '-'.join(inversed_sequence) 
             inversed_sequences.append(inversed_sequence)
@@ -33,8 +141,8 @@ def three_one_letter_code(sequences: str) -> list:
             inversed_sequence = ""
             aa_splitted = sequence.split("-")
             for aa in aa_splitted:
-                dict_three_letter_aa = dictionaries.AMINO_ACIDS.values()
-                dict_one_letter_aa = dictionaries.AMINO_ACIDS.keys()
+                dict_three_letter_aa = AMINO_ACIDS.values()
+                dict_one_letter_aa = AMINO_ACIDS.keys()
                 number_aa_in_dict = list(dict_three_letter_aa).index(aa)
                 inversed_sequence += list(dict_one_letter_aa)[number_aa_in_dict]
             inversed_sequences.append(inversed_sequence)
@@ -62,7 +170,7 @@ def define_molecular_weight(sequences: str) -> dict:
     for sequence in sequences:
         sequence_weight = 0
         for letter in sequence:
-            sequence_weight += dictionaries.AMINO_ACID_WEIGHT[letter.upper()]
+            sequence_weight += AMINO_ACID_WEIGHT[letter.upper()]
         sequence_weight -= (len(sequence) - 1) * 18  # deduct water from peptide bond
         sequences_weights[sequence] = round(sequence_weight, 2)
     return sequences_weights
@@ -171,8 +279,8 @@ def convert_to_nucl_acids(sequences: list, nucl_acids: str) -> dict:
     """
     nucl_acid_seqs = {'RNA': [], 'DNA': []}
     for sequence in sequences:
-        rna_seq = sequence.translate(dictionaries.RULE_OF_TRANSLATION)
-        dna_seq = rna_seq.translate(dictionaries.RULE_OF_TRANSCRIPTION)
+        rna_seq = sequence.translate(RULE_OF_TRANSLATION)
+        dna_seq = rna_seq.translate(RULE_OF_TRANSCRIPTION)
         if nucl_acids == 'RNA':
             nucl_acid_seqs['RNA'].append(rna_seq)
         if nucl_acids == 'DNA':
@@ -203,8 +311,8 @@ def check_and_parse_user_input(
     procedure = kwargs['procedure']
     if procedure not in PROCEDURES_TO_FUNCTIONS.keys():
         raise ValueError('Wrong procedure')
-    allowed_inputs = set(dictionaries.AMINO_ACIDS.keys()).union(
-        set(dictionaries.AMINO_ACIDS.values())
+    allowed_inputs = set(AMINO_ACIDS.keys()).union(
+        set(AMINO_ACIDS.values())
     )
     allowed_inputs.add('-')
     for sequence in sequences:
