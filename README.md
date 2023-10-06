@@ -176,16 +176,16 @@ run_protein_tools('MNY', procedure='convert_to_nucl_acids', nucl_acids = 'both')
 
 ## Program `fastq_tools.py` 
 
-### A tool to work nucleotide fragments in FASTQ format
+### A tool to work with nucleotide fragments in FASTQ format
 
-Program `fastq_tools.py` select nucleotide fragments in FASTQ format according to three requirements that could be determined by User:
+Program `fastq_tools.py` selects nucleotide fragments in FASTQ format according to three requirements that could be determined by User:
 - *GC*-content. The calculation of *GC*-content is performed according to the [formula](https://en.wikipedia.org/wiki/GC-content#Determination).
 - *The* *length* of fragment sequences
 - *The* *quality* *score* of sequencing. The program uses phred+33 score and converts the quality values according to this [rule](https://support.illumina.com/help/BaseSpace_OLH_009008/Content/Source/Informatics/BS/QualityScoreEncoding_swBS.htm)
 
 ### Usage
 
-The programm is based on `select_fastq` function that takes the dictionary of nucleotide fragments in FASTQ format, the range of maximal and minimal bounds of GC-content, the range of maximal and minimal bounds of the length of fragments, the quality threshold. All of the keyword arguments have their default meaning(see below). 
+The program is based on `select_fastq` function that takes the dictionary of nucleotide fragments in FASTQ format, the range of maximal and minimal bounds of GC-content, the range of maximal and minimal bounds of the length of fragments and the quality threshold. All of the keyword arguments have their default meaning(see below). 
 
 To start with the program run the following command:
 
@@ -196,29 +196,29 @@ Where:
   
   Example: {'name' : ('sequence', 'quality values')}
   
-- gc_bounds - keyword argument, determines maximal and minimal bounds of GC-content
+- gc_bounds - keyword argument that determines maximal and minimal bounds of GC-content
   
   By default `gc_bounds=(0,100)`
   
   This argument could be inputed in *tuple*, *int* or *float* types. In case of using one number the function accepts it as 
   a maximum bound
   
-  Examples: `gc_bounds=40  # (0,40)`
+  Example: `gc_bounds=40  # (0,40)`
   
-- length_bounds - keyword argument, determines maximal and minimal bounds of the length of fragments
+- length_bounds - keyword argument that determines maximal and minimal bounds of the length of fragments
   
   By default `length_bounds=(0,4294967296)`
   
   This argument could be inputed in *tuple*, *int* or *float* types. In case of using one number the function accepts it as 
   a maximum bound
   
-  Examples: `length_bounds=90.8  # (0,90.8)`
+  Example: `length_bounds=90.8  # (0,90.8)`
 
-- quality_threshold(int or float): the quality threshold of the main interest
+- quality_threshold(int or float): the quality threshold of the main interest. It could be inputed in *int* and *float* types
   
   By default `quality_threshold=0`
   
-  Examples: `quality_threshold=10`
+  Example: `quality_threshold=10`
 
 Without full names use arguments in a certain order
 
@@ -229,7 +229,7 @@ Example:
 `select_fastq(seqs, gc_bounds=(0,100), length_bounds=(0,200), quality_threshold=0)`
              
              
-In case of changing only one argument, provide its full name!
+In case of using only one argument, provide its full name!
 
 Example: `select_fastq(seqs, length_bounds=(50, 100))`
   
@@ -238,7 +238,7 @@ Before start, check the *Options* and *Examples*.
 
 ### Options
 
-There are three functions that are used in the main function:
+There are three functions that are used in the program:
     
 - is_in_gc_bounds(seq, gc_bounds) - takes a sequence in *string* type and check if the sequence falls in the range of GC-content bounds
 - is_in_length_bounds(seq, length_bounds) - takes a sequence in *string* type and check if the sequence falls in the range of length bounds
@@ -288,4 +288,4 @@ Bioinformatician, immunologist, MiLaborary inc. TCR-libraries QC developer
 
 MiLaboratory inc. manager&designer, immunologist
 
-Приятного использования! ✨✨
+Enjoy your use! ✨✨
