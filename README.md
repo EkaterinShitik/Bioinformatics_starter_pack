@@ -185,7 +185,7 @@ Program `fastq_tools.py` select nucleotide fragments in FASTQ format according t
 
 ### Usage
 
-The programm is based on `select_fastq` function that takes the dictionary of nucleotide fragments in FASTQ format, the range of maximal and minimal bounds of GC-content, the range of maximal and minimal bounds of the length of fragments, the quality threshold. All of the keyword arguments have their default meaning(see below).
+The programm is based on `select_fastq` function that takes the dictionary of nucleotide fragments in FASTQ format, the range of maximal and minimal bounds of GC-content, the range of maximal and minimal bounds of the length of fragments, the quality threshold. All of the keyword arguments have their default meaning(see below). 
 
 To start with the program run the following command:
 
@@ -257,16 +257,20 @@ select_fastq(example, gc_bounds=(40,60))
 # {'@SRX079804:1:SRR292678:1:1101:24563:24563':
 # ('ATTAGCGAGGAGGAGTGCTGAGAAGATGTCGCCTACGCCGTTGAAATTCCCTTCAATCAGGGGGTACTGGAGGATACGAGTTTGTGTG',
 #  'BFFFFFFFB@B@A<@D>BDDACDDDEBEDEFFFBFFFEFFDFFF=CC@DDFD8FFFFFFF8/+.2,@7<<:?B/:<><-><@.A*C>D')}
+
+select_fastq(example, quality_threshold=90)
+# Output:
+# 'There are no sequences suited to requirements'
 ```
 
 ### Troubleshooting
 
 |  Type of the problem                                             |  Probable cause
 | ------------------------------------------------------------ |--------------------
-| Output does not correspond the expected resultes             | The name of function is wrong. You see the results of another procedure
-| run_dna_rna_tools() missing 1 required keyword-only argument: 'func'                          | The 'func' argument is not added
-| ValueError: Invalid operation!                              | There is a mistake in the name of function
-| ValueError: Sequence of number *n* is incorrect! | Sequence of this number *n* does not correspond to structure of DNA or RNA
+| Output does not correspond the expected resultes             | The arguments are inputed without full names in the incorrect order
+| AttributeError: 'some' object has no attribute 'keys'                         | The 'seq' argument has incorrect 'some' type. It must be in dictionary type
+| TypeError: select_fastq() got an unexpected keyword argument 'n'   | The name of argument 'n' is written incorrectly
+| TypeError: '>=' not supported between instances of 'float' and 'str'| The arguments are inputed in incorrect type
 
 
 
