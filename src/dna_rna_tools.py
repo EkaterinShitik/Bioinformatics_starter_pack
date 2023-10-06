@@ -1,4 +1,6 @@
-import dictionaries
+COMPLEMENT_RULE = 'ATUCG'.maketrans('AaTtUuCcGg', 'TtAaAaGgCc')
+RULE_OF_TRANSCRIPTION = 'AUCG'.maketrans('UuTt', 'TtUu')
+
 
 def reverse(seq: str) -> str:
     """
@@ -26,7 +28,7 @@ def complement(seq: str) -> str:
     Return:
     - str: the changed sequence
     """
-    complement_seq = seq.translate(dictionaries.COMPLEMENT_RULE)
+    complement_seq = seq.translate(COMPLEMENT_RULE)
     return complement_seq
 
 
@@ -58,7 +60,7 @@ def transcribe(seq: str) -> str:
     Return:
     - str: the changed sequence
     """
-    transcribe_seq = seq.translate(dictionaries.RULE_OF_TRANSCRIPTION)
+    transcribe_seq = seq.translate(RULE_OF_TRANSCRIPTION)
     return transcribe_seq
 
 
@@ -106,3 +108,5 @@ def is_rna(seq: str) -> bool:
     - bool: the result of the check
     """
     return set(seq) <= set('AaGgCcUu')
+
+is_rna('AGCT')
