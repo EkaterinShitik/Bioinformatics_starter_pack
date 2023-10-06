@@ -349,6 +349,7 @@ def check_and_parse_user_input(
     procedure_arguments['sequences'] = sequences
     return procedure_arguments, procedure
 
+
 PROCEDURES_TO_FUNCTIONS = {
     'search_for_motifs': search_for_motifs,
     'search_for_alt_frames': search_for_alt_frames,
