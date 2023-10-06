@@ -189,11 +189,47 @@ The programm is based on `select_fastq` function that takes the dictionary of nu
 
 To start with the program run the following command:
 
-`select_fastq(seqs: dict, gc_bounds=(40,100), length_bounds=(10,100), quality_threshold=10)`
+`select_fastq(seqs, gc_bounds=(40,100), length_bounds=(10,100), quality_threshold=10)`
 
 Where:
-- sequences - an arbitrary number of DNA or RNA sequences that must to be inputed in *string* type
-- gc_bounds - keyword argument, determines 
+- seqs - the dictionary of nucleotide fragments in FASTQ format
+  
+  Example: {'name' : ('sequence', 'quality values')}
+  
+- gc_bounds - keyword argument, determines maximal and minimal bounds of GC-content
+  
+  By default `gc_bounds=(0,100)`
+  
+  This argument could be inputed in *tuple*, *int* or *float* types. In case of using one number the function accepts it as 
+  a maximum bound
+  
+  Examples: `gc_bounds=40  # (0,40)`
+  
+- length_bounds - keyword argument, determines maximal and minimal bounds of the length of fragments
+  
+  By default `length_bounds=(0,4294967296)`
+  
+  This argument could be inputed in *tuple*, *int* or *float* types. In case of using one number the function accepts it as 
+  a maximum bound
+  
+  Examples: `length_bounds=90.8  # (0,90.8)`
+
+- quality_threshold(int or float): the quality threshold of the main interest
+  
+  By default `quality_threshold=0`
+  
+  Examples: `quality_threshold=10`
+
+Without full names use arguments in a certain order
+
+Example: 
+
+`select_fastq(seqs, (0,100), (0,200), 0)`  # *the* *same* *as* `select_fastq(seqs, gc_bounds=(0,100), length_bounds=(0,200), quality_threshold=0)`
+             
+             
+In case of changing only one argument, provide its full name!
+
+Example: `select_fastq(seqs, length_bounds=(50, 100))`
   
 Before start, check the *Options* and *Examples*.
 
