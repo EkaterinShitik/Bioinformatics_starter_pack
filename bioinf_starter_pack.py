@@ -2,15 +2,6 @@ import src.dna_rna_tools as dna_rna_tools
 import src.protein_tools as protein_tools
 import src.fastq_tools as fastq_tools
 
-FUNCTIONS_NA = {
-        'transcribe': dna_rna_tools.transcribe,
-        'reverse': dna_rna_tools.reverse,
-        'complement': dna_rna_tools.complement,
-        'reverse_complement': dna_rna_tools.reverse_complement,
-        'gc_count': dna_rna_tools.gc_count
-        }
-
-
 def run_dna_rna_tools(*seqs: str, func: str) -> list[str]:
     """
     Main function to process nucleotide sequences by one of the developed tools.\n
@@ -46,26 +37,17 @@ def run_dna_rna_tools(*seqs: str, func: str) -> list[str]:
     For more details see README
     """
     result = []
-    if func not in FUNCTIONS_NA:
+    if func not in dna_rna_tools.FUNCTIONS_NA:
         raise ValueError('Invalid operation!')
     for seq in seqs:
-        if not(is_dna(seq)) and not(is_rna(seq)):
+        if not(dna_rna_tools.is_dna(seq)) and not(dna_rna_tools.is_rna(seq)):
             number_seq = seqs.index(seq) + 1
             error = 'Sequence of number ' + str(number_seq) + ' is incorrect!'
             raise ValueError(error)
-        result.append(FUNCTIONS_NA[func](seq))
+        result.append(dna_rna_tools.FUNCTIONS_NA[func](seq))
     if len(result) == 1:
         return result[0]
     return result
-
-
-FUNCTIONS_PROTEINS = {
-    'search_for_motifs': protein_tools.search_for_motifs,
-    'search_for_alt_frames': protein_tools.search_for_alt_frames,
-    'convert_to_nucl_acids': protein_tools.convert_to_nucl_acids,
-    'three_one_letter_code': protein_tools.three_one_letter_code,
-    'define_molecular_weight': protein_tools.define_molecular_weight,
-}
 
 
 def run_protein_tools(*sequences: str, **kwargs: str):
@@ -113,7 +95,7 @@ def run_protein_tools(*sequences: str, **kwargs: str):
             Please see Readme or desired docstring
     """
     procedure_arguments, procedure = protein_tools.check_and_parse_user_input(*sequences, **kwargs)
-    return FUNCTIONS_PROTEINS[procedure](**procedure_arguments)
+    return protein_tools.PROCEDURES_TO_FUNCTIONS[procedure](**procedure_arguments)
 
 
 def select_fastq(seqs: dict, gc_bounds=(0,100), length_bounds=(0,2**32), quality_threshold=0) -> dict:
