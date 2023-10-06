@@ -174,6 +174,64 @@ run_protein_tools('MNY', procedure='convert_to_nucl_acids', nucl_acids = 'both')
 | ValueError: Please provide desired type of nucl_acids        | There are no an additional argument *nucl_acids* in `convert_to_nucl_acids`
 | ValueError: Invalid nucl_acids argument                      | An additional argument in `convert_to_nucl_acids` is written incorrectly
 
+## Program `fastq_tools.py` 
+
+### A tool to work nucleotide fragments in FASTQ format
+
+Program `fastq_tools.py` select nucleotide fragments in FASTQ format according to three requirements that could be determined by User:
+- *GC*-content. The calculation of *GC*-content is performed according to the [formula](https://en.wikipedia.org/wiki/GC-content#Determination).
+- *The* *length* of fragment sequences
+- *The* *quality* *score* of sequencing. The program uses phred+33 score and converts the quality values according to this [rule](https://support.illumina.com/help/BaseSpace_OLH_009008/Content/Source/Informatics/BS/QualityScoreEncoding_swBS.htm)
+
+### Usage
+
+The programm is based on `select_fastq` function that takes the dictionary of nucleotide fragments in FASTQ format, the range of maximal and minimal bounds of GC-content, the range of maximal and minimal bounds of the length of fragments, the quality threshold. All of the keyword arguments have their default meaning(see below).
+
+To start with the program run the following command:
+
+`select_fastq(seqs: dict, gc_bounds=(40,100), length_bounds=(10,100), quality_threshold=10)`
+
+Where:
+- sequences - an arbitrary number of DNA or RNA sequences that must to be inputed in *string* type
+- gc_bounds - keyword argument, determines 
+  
+Before start, check the *Options* and *Examples*.
+
+
+### Options
+The program has five types of functions, for more information please see provided docstrings:
+
+- `transcribe` — print transcribed sequence*
+- `reverse` — print reversed sequence
+- `complement` — print complementary sequence
+- `reverse_complement` — print reversed complementary sequence
+- `gc_count` — count *GC*-content in percentage
+  
+\* Reverse transcription is also taken into account (from RNA to DNA)
+    
+### Examples
+
+```python
+run_dna_rna_tools('ATG', func='transcribe') # 'AUG'
+run_dna_rna_tools('ATG', func='reverse') # 'GTA'
+run_dna_rna_tools('AtG', func='complement') # 'TaC'
+run_dna_rna_tools('ATg', func='reverse_complement') # 'cAT'
+run_dna_rna_tools('ATG', 'aT', func='reverse') # ['GTA', 'Ta']
+run_dna_rna_tools('ATGgGCCtAA', func='gc_count') # '50.0%'
+run_dna_rna_tools('ATTg', 'AuUgG', func='gc_count') # ['25.0%', '40.0%']
+```
+
+### Troubleshooting
+
+|  Type of the problem                                             |  Probable cause
+| ------------------------------------------------------------ |--------------------
+| Output does not correspond the expected resultes             | The name of function is wrong. You see the results of another procedure
+| run_dna_rna_tools() missing 1 required keyword-only argument: 'func'                          | The 'func' argument is not added
+| ValueError: Invalid operation!                              | There is a mistake in the name of function
+| ValueError: Sequence of number *n* is incorrect! | Sequence of this number *n* does not correspond to structure of DNA or RNA
+
+
+
 ## Contacts 
 
 **Ekaterina Shitik** (shitik.ekaterina@gmail.com)
