@@ -1,4 +1,3 @@
-import src.dictionaries
 import src.dna_rna_tools as dna_rna_tools
 import src.protein_tools as protein_tools
 import src.fastq_tools as fastq_tools
