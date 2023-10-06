@@ -348,3 +348,11 @@ def check_and_parse_user_input(
         procedure_arguments['nucl_acids'] = kwargs['nucl_acids']
     procedure_arguments['sequences'] = sequences
     return procedure_arguments, procedure
+
+PROCEDURES_TO_FUNCTIONS = {
+    'search_for_motifs': search_for_motifs,
+    'search_for_alt_frames': search_for_alt_frames,
+    'convert_to_nucl_acids': convert_to_nucl_acids,
+    'three_one_letter_code': three_one_letter_code,
+    'define_molecular_weight': define_molecular_weight,
+}
