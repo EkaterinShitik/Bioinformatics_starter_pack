@@ -1,5 +1,7 @@
 import src.dictionaries
 import src.dna_rna_tools as dna_rna_tools
+import src.protein_tools as protein_tools
+
 
 FUNCTIONS = {
         'transcribe': dna_rna_tools.transcribe,
@@ -56,3 +58,60 @@ def run_dna_rna_tools(*seqs: str, func: str) -> list[str]:
     if len(result) == 1:
         return result[0]
     return result
+
+
+PROCEDURES_TO_FUNCTIONS = {
+    'search_for_motifs': protein_tools.search_for_motifs,
+    'search_for_alt_frames': protein_tools.search_for_alt_frames,
+    'convert_to_nucl_acids': protein_tools.convert_to_nucl_acids,
+    'three_one_letter_code': protein_tools.three_one_letter_code,
+    'define_molecular_weight': protein_tools.define_molecular_weight,
+}
+
+
+def run_protein_tools(*sequences: str, **kwargs: str):
+    """
+    Main function to process protein sequence by one of the developed tools.\n
+    Run one procedure at a time:
+    - Search for conserved amino acids residues in protein sequence
+    - Search for alternative frames in a protein sequences
+    - Convert protein sequences to RNA or DNA sequences
+    - Reverse the protein sequences from one-letter to three-letter format and vice-versa
+    - Define molecular weight of the protein sequences
+
+    All functions except *search_for_alt_frames* are letter case sensitive\n
+    Provide protein sequence in one letter code.\n
+    You can obtain one letter code from three letter code with *three_one_letter_code*\n
+    If more information needed please see README or desired docstring
+
+    Arguments:
+    - sequences (str): sequences to process
+    - procedure (str): desired procedure:
+        - 'search_for_motifs'
+        - 'search_for_alt_frames'
+        - 'convert_to_nucl_acids'
+        - 'three_one_letter_code'
+        - 'define_molecular_weight'
+
+    For 'search_for_motif' procedure provide:
+    - motif (str]: desired motif to check presense in every given sequence\n
+            Example: motif='GA'
+    - overlapping (bool): count (True) or skip (False) overlapping matches. (Optional)\n
+            Example: overlapping =False
+
+    For 'search_for_alt_frames' procedure provide:
+    - alt_start_aa (str]: the name of an amino acid that is encoded by alternative start codon (Optional)\n
+            Example: alt_start_aa='I'
+
+    For 'convert_to_nucl_acids' procedure provide:
+    - nucl_acids (str]: the nucleic acid to convert to\n
+            Example: nucl_acids='RNA'\n
+                           nucl_acids='DNA'\n
+                           nucl_acids='both'
+
+    Return:
+    - dict: Dictionary with processed sequences. Depends on desired tool\n
+            Please see Readme or desired docstring
+    """
+    procedure_arguments, procedure = protein_tools.check_and_parse_user_input(*sequences, **kwargs)
+    return PROCEDURES_TO_FUNCTIONS[procedure](**procedure_arguments)
