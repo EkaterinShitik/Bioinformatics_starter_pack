@@ -321,7 +321,7 @@ def check_and_parse_user_input(
                raise ValueError('Invalid sequence given')
         else:
             if procedure != 'three_one_letter_code':
-                raise ValueError('Invalid sequence given')
+                raise ValueError('Use three-letter aa only for "three_one_letter_code" procedure!')
             if not set(sequence.split('-')).issubset(allowed_inputs):
                 raise ValueError('Invalid sequence given')
     procedure_arguments = {}
