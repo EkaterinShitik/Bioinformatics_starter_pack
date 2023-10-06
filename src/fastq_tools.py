@@ -19,10 +19,10 @@ def is_in_gc_bounds(seq: str, gc_bounds: tuple, gc_counter=0) -> bool:
         if nucl in ('G', 'C', 'g', 'c'):
             gc_counter += 1
     gc_share = gc_counter/len(seq)*100 
-    return gc_min <= gc_share <=gc_max
+    return gc_min <= gc_share <= gc_max
 
 
-def is_in_length_bounds(seq:str, length_bounds: tuple) -> bool:
+def is_in_length_bounds(seq: str, length_bounds: tuple) -> bool:
     """
     Check if the sequence falls in the range of length bounds
     The range of length bounds is determined with length_bounds argument
@@ -57,7 +57,6 @@ def is_above_quality_threshold(quality_scores: str, quality_threshold: float, su
     Return:
     - bool: the result of the check
     """
-    
     length_code = len(quality_scores)
     for symbol in quality_scores:
         sum_phred += (ord(symbol) - 33)
