@@ -2,6 +2,7 @@ import src.dna_rna_tools as dna_rna_tools
 import src.protein_tools as protein_tools
 import src.fastq_tools as fastq_tools
 
+
 def run_dna_rna_tools(*seqs: str, func: str) -> list[str]:
     """
     Main function to process nucleotide sequences by one of the developed tools.\n
@@ -40,7 +41,7 @@ def run_dna_rna_tools(*seqs: str, func: str) -> list[str]:
     if func not in dna_rna_tools.FUNCTIONS_NA:
         raise ValueError('Invalid operation!')
     for seq in seqs:
-        if not(dna_rna_tools.is_dna(seq)) and not(dna_rna_tools.is_rna(seq)):
+        if not (dna_rna_tools.is_dna(seq)) and not (dna_rna_tools.is_rna(seq)):
             number_seq = seqs.index(seq) + 1
             error = 'Sequence of number ' + str(number_seq) + ' is incorrect!'
             raise ValueError(error)
@@ -98,7 +99,7 @@ def run_protein_tools(*sequences: str, **kwargs: str):
     return protein_tools.PROCEDURES_TO_FUNCTIONS[procedure](**procedure_arguments)
 
 
-def select_fastq(seqs: dict, gc_bounds=(0,100), length_bounds=(0,2**32), quality_threshold=0) -> dict:
+def select_fastq(seqs: dict, gc_bounds=(0, 100), length_bounds=(0, 2 ** 32), quality_threshold=0) -> dict:
     """
     Main function to select fragmnets in FASTQ format according to three main requirements:\n
     -fall in the range of GC-content bounds
@@ -159,15 +160,16 @@ def select_fastq(seqs: dict, gc_bounds=(0,100), length_bounds=(0,2**32), quality
     """
     if type(length_bounds) == int or type(length_bounds) == float:
         length_bounds = 0, length_bounds
-    if type(gc_bounds) == int or type(gc_bounds) == float: 
+    if type(gc_bounds) == int or type(gc_bounds) == float:
         gc_bounds = 0, gc_bounds
     result = {}
     for name in seqs.keys():
         seq = seqs[name][0]
         quality_scores = seqs[name][1]
-        if (fastq_tools.is_in_gc_bounds(seq, gc_bounds) and
-            fastq_tools.is_in_length_bounds(seq, length_bounds) and
-            fastq_tools.is_above_quality_threshold(quality_scores, quality_threshold)):
+        if (
+                fastq_tools.is_in_gc_bounds(seq, gc_bounds) and
+                fastq_tools.is_in_length_bounds(seq, length_bounds) and
+                fastq_tools.is_above_quality_threshold(quality_scores, quality_threshold)):
             result[name] = seqs[name]
     if len(result) == 0:
         return 'There are no sequences suited to requirements'
