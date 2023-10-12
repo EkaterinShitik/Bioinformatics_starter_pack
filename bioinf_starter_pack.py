@@ -101,7 +101,11 @@ def run_protein_tools(*sequences: str, **kwargs: str):
     return protein_tools.PROCEDURES_TO_FUNCTIONS[procedure](**procedure_arguments)
 
 
-def select_fastq(input_path: str, output_filename: Optional[str] = None,  gc_bounds=(0,100), length_bounds=(0,2**32), quality_threshold=0) -> str:
+def select_fastq(input_path: str,
+                 output_filename: Optional[str] = None,
+                 gc_bounds=(0, 100),
+                 length_bounds=(0, 2**32),
+                 quality_threshold=0) -> str:
     """
     Main function to select fragmnets in FASTQ format according to three main requirements:\n
     -fall in the range of GC-content bounds
@@ -188,7 +192,8 @@ def select_fastq(input_path: str, output_filename: Optional[str] = None,  gc_bou
                 else:
                     name = line
                     seqs[name] = []
-            else: seqs[name].append(line)
+            else:
+                seqs[name].append(line)
     if type(length_bounds) == int or type(length_bounds) == float:
         length_bounds = 0, length_bounds
     if type(gc_bounds) == int or type(gc_bounds) == float: 
@@ -206,14 +211,14 @@ def select_fastq(input_path: str, output_filename: Optional[str] = None,  gc_bou
     file_output = []
     for name, [seq, comment, quality] in result.items():
         (file_output.append(name) or 
-        file_output.append(seq) or 
-        file_output.append(comment) or 
-        file_output.append(quality))  # make list
+         file_output.append(seq) or
+         file_output.append(comment) or
+         file_output.append(quality))  # make list
     current_directory = os.getcwd()
     output_path = os.path.join(current_directory, 'fastq_filtrator_results')  # determine the path to files
     if not(os.path.exists(output_path)):
         os.mkdir(output_path)
-    if output_filename == None:
+    if output_filename is None:
         input_filename = os.path.split(input_path)[-1]  # process output_filename
         output_filename = input_filename
     if not(output_filename.endswith('.fastq')):
