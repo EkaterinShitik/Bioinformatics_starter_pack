@@ -101,7 +101,7 @@ def run_protein_tools(*sequences: str, **kwargs: str):
     return protein_tools.PROCEDURES_TO_FUNCTIONS[procedure](**procedure_arguments)
 
 
-def select_fastq(input_path: str, output_filename: Optional[str]=None,  gc_bounds=(0,100), length_bounds=(0,2**32), quality_threshold=0) -> str:
+def select_fastq(input_path: str, output_filename: Optional[str] = None,  gc_bounds=(0,100), length_bounds=(0,2**32), quality_threshold=0) -> str:
     """
     Main function to select fragmnets in FASTQ format according to three main requirements:\n
     -fall in the range of GC-content bounds
