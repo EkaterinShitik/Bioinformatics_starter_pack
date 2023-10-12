@@ -1,3 +1,5 @@
+import os
+from typing import Optional
 import src.dna_rna_tools as dna_rna_tools
 import src.protein_tools as protein_tools
 import src.fastq_tools as fastq_tools
@@ -99,11 +101,11 @@ def run_protein_tools(*sequences: str, **kwargs: str):
     return protein_tools.PROCEDURES_TO_FUNCTIONS[procedure](**procedure_arguments)
 
 
-def select_fastq(seqs: dict, gc_bounds=(0, 100), length_bounds=(0, 2**32), quality_threshold=0) -> dict:
+def select_fastq(input_path: str, output_filename: Optional[str]=None,  gc_bounds=(0,100), length_bounds=(0,2**32), quality_threshold=0) -> str:
     """
     Main function to select fragmnets in FASTQ format according to three main requirements:\n
     -fall in the range of GC-content bounds
-   The range of GC-content bounds is determined with gc_bounds argument
+    The range of GC-content bounds is determined with gc_bounds argument
    
     -falls in the range of length bounds
     The range of length bounds is determined with length_bounds argument
@@ -111,19 +113,35 @@ def select_fastq(seqs: dict, gc_bounds=(0, 100), length_bounds=(0, 2**32), quali
     -exceeds the quality threshold of the interest
     The quality threshold is determined with quality_threshold argument
 
+    Function takes the path to the file in input_path argument. Use files with fastq extension only.
+
+    Function output the result of checking in a file that is named according to output_filename(Optional).
+
+    The output file also has fatq extension.
+
+    The output file is saved in the 'fastq_filtrator_results' directory.
+
+    If 'fastq_filtrator_results' directory doesn't exist the program creates it in a current directory.
+
     Without full names use arguments in a certain order
-    Example: select_fastq(seqs, (0,100), (0,200), 0)
-           # select_fastq(seqs, gc_bounds=(0,100), length_bounds=(0,200), quality_threshold=0)
+    Example: select_fastq(input_path, output_filename, (0,100), (0,200), 0)
+           # select_fastq(input_path, output_filename, gc_bounds=(0,100), length_bounds=(0,200), quality_threshold=0)
              
              
     In case of changing only one argument, provide its full name!
-    Example: select_fastq(seqs, length_bounds=(50, 100))
+    Example: select_fastq(input_path, output_filename, length_bounds=(50, 100))
 
              
     Arguments:
     
-    - seqs (dict): the set of fragments to be analyzed
-    Example: {'name' : ('sequence', 'quality values')}
+    - input_path(str): the path to the file
+
+    - output_filename(str): the name for output file with obtained result
+    By default output_filename=None
+    Without output_filename argument the output file is named as input file
+    Name without fastq extention is acceptible.
+    Example: output_filename='result'  # 'result.fastq'
+             output_filename='result.fastq'
 
     - gc_bounds(tuple or int or float): contain minimal and maximum GC-content bounds
     By default gc_bounds=(0,100)
@@ -153,24 +171,53 @@ def select_fastq(seqs: dict, gc_bounds=(0, 100), length_bounds=(0, 2**32), quali
     Check if the mean of quality values exceeds the quality threshold
     
     Return:
-    - dict: Dictionary with selected fragments
+    - file: file with fastq extension containing selected fragments.
     
     For more information please see README
     
     """
+    seqs = {}
+    with open(input_path) as f:
+        name = f.readline().strip()
+        seqs[name] = []
+        for line in f:
+            line = line.strip()
+            if line.startswith('@'):
+                if len(seqs[name]) == 2:
+                    seqs[name].append(line)
+                else:
+                    name = line
+                    seqs[name] = []
+            else: seqs[name].append(line)
     if type(length_bounds) == int or type(length_bounds) == float:
         length_bounds = 0, length_bounds
-    if type(gc_bounds) == int or type(gc_bounds) == float:
+    if type(gc_bounds) == int or type(gc_bounds) == float: 
         gc_bounds = 0, gc_bounds
     result = {}
     for name in seqs.keys():
         seq = seqs[name][0]
-        quality_scores = seqs[name][1]
-        if (
-                fastq_tools.is_in_gc_bounds(seq, gc_bounds) and
-                fastq_tools.is_in_length_bounds(seq, length_bounds) and
-                fastq_tools.is_above_quality_threshold(quality_scores, quality_threshold)):
+        quality_scores = seqs[name][2]
+        if (is_in_gc_bounds(seq, gc_bounds) and
+            is_in_length_bounds(seq, length_bounds) and
+            is_above_quality_threshold(quality_scores, quality_threshold)):
             result[name] = seqs[name]
     if len(result) == 0:
         return 'There are no sequences suited to requirements'
-    return result
+    file_output = []
+    for name, [seq, comment, quality] in result.items():
+        (file_output.append(name) or 
+        file_output.append(seq) or 
+        file_output.append(comment) or 
+        file_output.append(quality))  # make list
+    current_directory = os.getcwd()
+    output_path = os.path.join(current_directory, 'fastq_filtrator_results')  # determine the path to files
+    if not(os.path.exists(output_path)):
+        os.mkdir(output_path)
+    if output_filename == None:
+        input_filename = os.path.split(input_path)[-1]  # process output_filename
+        output_filename = input_filename
+    if not(output_filename.endswith('.fastq')):
+        output_filename = output_filename + '.fastq'
+    with open(os.path.join(output_path, output_filename), mode='w') as file:  # write in a new file
+        for line in file_output:
+            file.write(line + '\n') 
