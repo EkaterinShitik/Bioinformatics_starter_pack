@@ -197,9 +197,9 @@ def select_fastq(input_path: str, output_filename: Optional[str] = None,  gc_bou
     for name in seqs.keys():
         seq = seqs[name][0]
         quality_scores = seqs[name][2]
-        if (is_in_gc_bounds(seq, gc_bounds) and
-            is_in_length_bounds(seq, length_bounds) and
-            is_above_quality_threshold(quality_scores, quality_threshold)):
+        if (fastq_tools.is_in_gc_bounds(seq, gc_bounds) and
+            fastq_tools.is_in_length_bounds(seq, length_bounds) and
+            fastq_tools.is_above_quality_threshold(quality_scores, quality_threshold)):
             result[name] = seqs[name]
     if len(result) == 0:
         return 'There are no sequences suited to requirements'
