@@ -353,7 +353,7 @@ The function `select_genes_from_gbk_to_fasta` provides the information about the
 
 #### Usage
 
-The function takes gbk file and output obtained results in fasta format in a current directory. Besides, function takes the name for the output FASTA-file.
+The function takes gbk file and output obtained results in fasta format in a current directory. Besides, function takes the name for the output FASTA-file. If flanking regions are not annotated they named as unknown**N** where N is a serial number. 
 
 To start with the program run the following command:
 
