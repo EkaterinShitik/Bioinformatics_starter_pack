@@ -223,6 +223,8 @@ def select_fastq(input_path: str,
         output_filename = input_filename
     if not(output_filename.endswith('.fastq')):
         output_filename = output_filename + '.fastq'
+    if os.path.exists(os.path.join(output_path, output_filename)):
+        raise ValueError('File with such name exists! Change output_filename arg!')
     with open(os.path.join(output_path, output_filename), mode='w') as file:  # write in a new file
         for line in file_output:
             file.write(line + '\n') 
