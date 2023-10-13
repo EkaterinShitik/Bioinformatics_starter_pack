@@ -265,7 +265,31 @@ There are three functions that are used in the program:
 - is_in_gc_bounds(seq, gc_bounds) - takes a sequence in *string* type and check if the sequence falls in the range of GC-content bounds
 - is_in_length_bounds(seq, length_bounds) - takes a sequence in *string* type and check if the sequence falls in the range of length bounds
 - is_above_quality_threshold(quality_scores, quality_threshold) - takes a quality values in *string* type and check if the mean of quality values exceeds the quality threshold
-    
+
+#### Examples
+
+```python
+# Input
+# '@SRX079804:1:SRR292678:1:1101:21885:21885'
+# 'ACAGCAA'
+# '+'
+# 'FGGGFGG'
+# '@SRX079804:1:SRR292678:1:1101:24563:24563'
+# 'ATTAGCGAGGAGGAGT'
+# '+'
+# 'BFFFFFFFB@B@A<@D'
+
+
+select_fastq(example, gc_bounds=(40,60))
+
+# Output:
+# '@SRX079804:1:SRR292678:1:1101:24563:24563'
+# 'ATTAGCGAGGAGGAGT'
+# '+'
+# 'BFFFFFFFB@B@A<@D'
+
+```
+
 
 #### Troubleshooting
 
@@ -302,7 +326,20 @@ Where:
 
   Example: output_filename='result'  # 'result.fasta'
     
+#### Examples
 
+```python
+# Input
+# >Genome
+# ATCG
+# GGCT
+
+convert_multiline_fasta_to_oneline(input_fasta, output_fasta)
+
+# Ouput
+# >Genome
+# ATCGGGCT
+```
 
 #### Troubleshooting
 
@@ -353,7 +390,25 @@ Where:
     
     Example: output_filename='processed_seqs'  # processed_seqs.fasta
 
+#### Examples
 
+```python
+# Input
+# /gene="phrB"
+# /translation="MITHLVWFRQDLRLH"
+# /gene="dtpD"
+# /translation="MNKHASQPRAIYYVVALQ"
+# /gene="ybgI"
+# /translation="MKNTELEQLINEKLNSAAISDYAPN"
+
+select_genes_from_gbk_to_fasta(input_gbk, 'dtpD', output_fasta='selected_genes')
+
+# Ouput file selected_genes.fasta
+# >gene phrB
+# MITHLVWFRQDLRLH
+# >gene ybgI
+# MKNTELEQLINEKLNSAAISDYAPN
+```
 
 #### Troubleshooting
 
