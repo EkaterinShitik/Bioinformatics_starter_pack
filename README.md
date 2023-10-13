@@ -271,14 +271,45 @@ There are three functions that are used in the program:
 |  Type of the problem                                             |  Probable cause
 | ------------------------------------------------------------ |--------------------
 | Output does not correspond the expected resultes             | The arguments are inputed without full names in the incorrect order
-| AttributeError: 'some' object has no attribute 'keys'                         | The 'seq' argument has incorrect 'some' type. It must be in dictionary type
 | TypeError: select_fastq() got an unexpected keyword argument 'n'   | The name of argument 'n' is written incorrectly
 | TypeError: '>=' not supported between instances of 'float' and 'str'| The arguments are inputed in incorrect type
-| ValueError: 'File with such name exists! Change output_filename arg!' | File with such name exists in 'fastq_filtrator_results' directory
+| ValueError: File with such name exists! Change output_filename arg! | File with such name exists in 'fastq_filtrator_results' directory
 
 
 ## Program `bio_files_processor.py`
 ### Function `convert_multiline_fasta_to_oneline`
+The function `convert_multiline_fasta_to_oneline` converts DNA/RNA/protein sequences in FASTA file from multiline format to one line. 
+
+#### Usage
+
+The function takes fasta file and output obtained results also in fasta format in a current directory. Besides function takes the name for the output FASTA-file.
+
+To start with the program run the following command:
+
+`convert_multiline_fasta_to_oneline(input_fasta, output_fasta)`
+
+Where:
+- input_fasta - the name of fasta file to be processed. Must be in a string type
+  
+  Example: 'example.fasta'
+  
+- output_filename - the name for output file with obtained result. Must be in a string type.
+
+  This argument is optional. By default output_filename = 'result'
+  
+  Output_filename argument must be provided without fasta extension.
+
+  Example: output_filename='result'  # 'result.fasta'
+    
+
+#### Troubleshooting
+
+|  Type of the problem                                             |  Probable cause
+| ------------------------------------------------------------ |--------------------
+| ValueError: File with such name exists! Change output_fasta arg! | File with such name exists in current directory
+
+
+
 ### Function `select_genes_from_gbk_to_fasta`
 
 ## Contacts 
