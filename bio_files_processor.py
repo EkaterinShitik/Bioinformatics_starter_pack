@@ -35,7 +35,7 @@ def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta='result') 
     file_output = []
     for name, seq in seqs.items():
         (file_output.append(name) or 
-        file_output.append(seq))
+         file_output.append(seq))
     current_directory = os.getcwd()
     name_fasta = output_fasta + '.fasta'
     if os.path.exists(os.path.join(current_directory, name_fasta)):
