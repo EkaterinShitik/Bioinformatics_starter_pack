@@ -196,6 +196,7 @@ Program `fastq_tools.py` selects nucleotide fragments in FASTQ format according 
 
 The program is based on `select_fastq` function that takes the path to a FATQ file, the name of a FATQ file with obtained results, the range of maximal and minimal bounds of GC-content, the range of maximal and minimal bounds of the length of fragments and the quality threshold. All of the keyword arguments have their default meaning(see below).
 The program output obtained fastq file in the 'fastq_filtrator_results' directory. If 'fastq_filtrator_results' directory doesn't exist the program creates it in a current directory.
+In case there are no sequences that suite requirements the program output: 'There are no sequences suited to requirements'.
 
 To start with the program run the following command:
 
@@ -278,7 +279,7 @@ There are three functions that are used in the program:
 
 ## Program `bio_files_processor.py`
 ### Function `convert_multiline_fasta_to_oneline`
-The function `convert_multiline_fasta_to_oneline` converts DNA/RNA/protein sequences in FASTA file from multiline format to one line. 
+The function `convert_multiline_fasta_to_oneline` converts any number of DNA/RNA/protein sequences in FASTA file from multiline format to one line. 
 
 #### Usage
 
@@ -302,6 +303,7 @@ Where:
   Example: output_filename='result'  # 'result.fasta'
     
 
+
 #### Troubleshooting
 
 |  Type of the problem                                             |  Probable cause
@@ -309,8 +311,56 @@ Where:
 | ValueError: File with such name exists! Change output_fasta arg! | File with such name exists in current directory
 
 
-
 ### Function `select_genes_from_gbk_to_fasta`
+The function `select_genes_from_gbk_to_fasta` provides the information about the nearest neighbors of the gene of main interest. The information includes the name of a flanking gene and its protein sequence. 
+
+#### Usage
+
+The function takes gbk file and output obtained results in fasta format in a current directory. Besides, function takes the name for the output FASTA-file.
+
+To start with the program run the following command:
+
+`select_genes_from_gbk_to_fasta(input_gbk, *genes, n_before, n_after, output_fasta)`
+
+Where:
+  - input_gbk: the name of gbk file to be processed. Must be in a string type
+
+  - *genes: names of any number of genes to be studied. Must be in a string type
+
+  - n_before: a number of upstream flanking genes (Optional)
+    
+    The argument is accepted in int type. By default n_before=1
+    
+    To find more flanking genes provide full name of argument
+    
+    Example: n_before=2
+
+  - n_after(int): a number of downstream flanking genes (Optional)
+    
+    The argument is accepted in int type. By default n_after=1
+    
+    To find more flanking genes provide full name of argument
+    
+    Example: n_after=2
+    
+  - output_fasta: the name for output file with obtained result (Optional)
+
+    By default output_fasta = 'result'
+
+    Must be in a string type. Argument output_fasta must be inputed without fasta extension.
+
+    Use full name of argument
+    
+    Example: output_filename='processed_seqs'  # processed_seqs.fasta
+
+
+
+#### Troubleshooting
+
+|  Type of the problem                                             |  Probable cause
+| ------------------------------------------------------------ |--------------------
+| ValueError: File with such name exists! Change output_fasta arg! | File with such name exists in current directory
+
 
 ## Contacts 
 
