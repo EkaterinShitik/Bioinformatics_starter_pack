@@ -215,8 +215,8 @@ Where:
   
   Name without fastq extention is acceptible
 
-  Example: output_filename='result'  # 'result.fastq'
-             output_filename='result.fastq'
+  Example: `output_filename='result'  # 'result.fastq'`
+
   
 - gc_bounds - keyword argument that determines maximal and minimal bounds of GC-content
   
@@ -370,7 +370,7 @@ Where:
     
     To find more flanking genes provide full name of argument
     
-    Example: n_before=2
+    Example: `n_before=2`
 
   - n_after(int): a number of downstream flanking genes (Optional)
     
@@ -378,7 +378,7 @@ Where:
     
     To find more flanking genes provide full name of argument
     
-    Example: n_after=2
+    Example: `n_after=2`
     
   - output_fasta: the name for output file with obtained result (Optional)
 
@@ -388,7 +388,7 @@ Where:
 
     Use full name of argument
     
-    Example: output_filename='processed_seqs'  # processed_seqs.fasta
+    Example: `output_filename='processed_seqs'  # processed_seqs.fasta`
 
 #### Examples
 
