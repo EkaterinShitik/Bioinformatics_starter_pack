@@ -40,3 +40,45 @@ def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta='result') 
     with open(os.path.join(current_directory, output_fasta + '.fasta'), mode='w') as file:
         for line in file_output:
             file.write(line + '\n')
+
+
+def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_after=1, output_fasta='result') -> str:
+    annot_genes = []
+    genes_information = []
+    with open(input_gbk) as f:
+        for line in f:
+            line = line.strip()
+            if line.startswith('CDS'):
+                if not(any('gene' in _ for _ in genes_information)):  # Delete elements without genes
+                    genes_information = []
+                else:
+                    genes_information = ''.join(genes_information)
+                    genes_information = genes_information.split('"')
+                    name_annot_gene = genes_information[1]
+                    sequence_annot_gene = genes_information[-2]
+                    annot_genes.append([name_annot_gene, sequence_annot_gene])  # Choose only name and sequence
+                    genes_information = []
+            else:
+                genes_information.append(line)
+    result = []
+    for gene_in_annot in annot_genes:
+        name_gene_in_annot = gene_in_annot[0]
+        for gene in genes:
+            if name_gene_in_annot == gene:
+                posit_cur_gene = annot_genes.index(gene_in_annot)
+                for previous_posit in range(n_before, 0, -1):
+                    name_previous_gene = annot_genes[posit_cur_gene - previous_posit][0]
+                    name_previous_for_fasta = '>gene ' + name_previous_gene
+                    seq_previous_gene = annot_genes[posit_cur_gene - previous_posit][1]
+                    result.append(name_previous_for_fasta)
+                    result.append(seq_previous_gene)  
+                for next_posit in range(1, n_after+1):
+                    name_next_gene = annot_genes[posit_cur_gene + next_posit][0]
+                    name_next_for_fasta = '>gene ' + name_next_gene
+                    seq_next_gene = annot_genes[posit_cur_gene + next_posit][1]
+                    result.append(name_next_for_fasta)
+                    result.append(seq_next_gene)
+    current_directory = os.getcwd()
+    with open(os.path.join(current_directory, output_fasta + '.fasta'), mode='w') as file:
+        for line in result:
+            file.write(line + '\n') 
