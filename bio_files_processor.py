@@ -61,13 +61,20 @@ def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_af
 
     - *genes(str): names of any number of genes to be studied
 
-    - n_before(int): a number of upstream flanking genes 
+    - n_before(int): a number of upstream flanking genes (Optional)
+    By default n_before=1
+    To find more flanking genes provide full name of argument
+    Example: n_before=2
 
-    - n_after(int): a number of downstream flanking genes 
+    - n_after(int): a number of downstream flanking genes (Optional)
+    By default n_after=1
+    To find more flanking genes provide full name of argument
+    Example: n_after=2
     
     - output_fasta(str): the name for output file with obtained result (Optional)
     By default output_fasta = 'result'
     Argument output_fasta must be inputed without fasta extension
+    Use full name of argument
     Example: output_filename='processed_seqs'  # processed_seqs.fasta
     
     Return:
