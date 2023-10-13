@@ -55,6 +55,10 @@ def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_af
 
     It saves output file in a current directory
 
+    If selected genes are unknown they are named as unknownN 
+
+    N is a number of this gene in gbk file
+
     Arguments:
 
     - input_gbk(str): the name of gbk file to be processed
@@ -82,19 +86,22 @@ def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_af
     """
     annot_genes = []
     genes_information = []
+    num = 1
     with open(input_gbk) as f:
         for line in f:
             line = line.strip()
             if line.startswith('CDS'):
-                if not(any('gene' in _ for _ in genes_information)):  # Delete elements without genes
-                    genes_information = []
+                genes_information = ''.join(genes_information)
+                genes_information = genes_information.split('"')
+                if not(any('gene' in _ for _ in genes_information)):
+                    name_annot_gene = 'unknown' + str(num)
+                    num += 1
+                    sequence_annot_gene = genes_information[-2]
                 else:
-                    genes_information = ''.join(genes_information)
-                    genes_information = genes_information.split('"')
                     name_annot_gene = genes_information[1]
                     sequence_annot_gene = genes_information[-2]
-                    annot_genes.append([name_annot_gene, sequence_annot_gene])  # Choose only name and sequence
-                    genes_information = []
+                annot_genes.append([name_annot_gene, sequence_annot_gene])  # Choose only name and sequence
+                genes_information = []
             else:
                 genes_information.append(line)
     result = []
@@ -116,7 +123,7 @@ def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_af
                     result.append(name_next_for_fasta)
                     result.append(seq_next_gene)
     if len(result) == 0:
-        return('There are no provided genes in gbk file')
+        return 'There are no provided genes in gbk file'
     current_directory = os.getcwd()
     name_fasta = output_fasta + '.fasta'
     if os.path.exists(os.path.join(current_directory, name_fasta)):
