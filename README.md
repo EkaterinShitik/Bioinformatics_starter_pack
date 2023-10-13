@@ -194,16 +194,28 @@ Program `fastq_tools.py` selects nucleotide fragments in FASTQ format according 
 
 #### Usage
 
-The program is based on `select_fastq` function that takes the dictionary of nucleotide fragments in FASTQ format, the range of maximal and minimal bounds of GC-content, the range of maximal and minimal bounds of the length of fragments and the quality threshold. All of the keyword arguments have their default meaning(see below). 
+The program is based on `select_fastq` function that takes the path to a FATQ file, the name of a FATQ file with obtained results, the range of maximal and minimal bounds of GC-content, the range of maximal and minimal bounds of the length of fragments and the quality threshold. All of the keyword arguments have their default meaning(see below).
+The program output obtained fastq file in the 'fastq_filtrator_results' directory. If 'fastq_filtrator_results' directory doesn't exist the program creates it in a current directory.
 
 To start with the program run the following command:
 
-`select_fastq(seqs, gc_bounds=..., length_bounds=..., quality_threshold=...)`
+`select_fastq(input_path, output_filename, gc_bounds=..., length_bounds=..., quality_threshold=...)`
 
 Where:
-- seqs - the dictionary of nucleotide fragments in FASTQ format
+- input_path - the path to the FASTQ file. Must be in a string type
   
-  Example: {'name' : ('sequence', 'quality values')}
+  Example: '/User/main_dir/example.fastq'
+  
+- output_filename - the name for output file with obtained result. Must be in a string type.
+
+  This argument is optional. By default output_filename = None
+  
+  Without output_filename argument the output file is named as input file
+  
+  Name without fastq extention is acceptible
+
+  Example: output_filename='result'  # 'result.fastq'
+             output_filename='result.fastq'
   
 - gc_bounds - keyword argument that determines maximal and minimal bounds of GC-content
   
@@ -253,24 +265,6 @@ There are three functions that are used in the program:
 - is_in_length_bounds(seq, length_bounds) - takes a sequence in *string* type and check if the sequence falls in the range of length bounds
 - is_above_quality_threshold(quality_scores, quality_threshold) - takes a quality values in *string* type and check if the mean of quality values exceeds the quality threshold
     
-#### Examples
-
-```python
-example = {'@SRX079804:1:SRR292678:1:1101:21885:21885': ('ACAGCAACATAAACATGATGGGATGGCGTAAGCCCCCGAGATATCAGTTTACCCAGGATAAGAGATTAAATTATGAGCAACATTATTAA',
-  'FGGGFGGGFGGGFGDFGCEBB@CCDFDDFFFFBFFGFGEFDFFFF;D@DD>C@DDGGGDFGDGG?GFGFEGFGGEF@FDGGGFGFBGGD'),
- '@SRX079804:1:SRR292678:1:1101:24563:24563': ('ATTAGCGAGGAGGAGTGCTGAGAAGATGTCGCCTACGCCGTTGAAATTCCCTTCAATCAGGGGGTACTGGAGGATACGAGTTTGTGTG',
-  'BFFFFFFFB@B@A<@D>BDDACDDDEBEDEFFFBFFFEFFDFFF=CC@DDFD8FFFFFFF8/+.2,@7<<:?B/:<><-><@.A*C>D')}
-
-select_fastq(example, gc_bounds=(40,60))
-# Output:
-# {'@SRX079804:1:SRR292678:1:1101:24563:24563':
-# ('ATTAGCGAGGAGGAGTGCTGAGAAGATGTCGCCTACGCCGTTGAAATTCCCTTCAATCAGGGGGTACTGGAGGATACGAGTTTGTGTG',
-#  'BFFFFFFFB@B@A<@D>BDDACDDDEBEDEFFFBFFFEFFDFFF=CC@DDFD8FFFFFFF8/+.2,@7<<:?B/:<><-><@.A*C>D')}
-
-select_fastq(example, quality_threshold=90)
-# Output:
-# 'There are no sequences suited to requirements'
-```
 
 #### Troubleshooting
 
@@ -280,6 +274,7 @@ select_fastq(example, quality_threshold=90)
 | AttributeError: 'some' object has no attribute 'keys'                         | The 'seq' argument has incorrect 'some' type. It must be in dictionary type
 | TypeError: select_fastq() got an unexpected keyword argument 'n'   | The name of argument 'n' is written incorrectly
 | TypeError: '>=' not supported between instances of 'float' and 'str'| The arguments are inputed in incorrect type
+| ValueError: 'File with such name exists! Change output_filename arg!' | File with such name exists in 'fastq_filtrator_results' directory
 
 
 ## Program `bio_files_processor.py`
