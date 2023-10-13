@@ -43,6 +43,33 @@ def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta='result') 
 
 
 def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_after=1, output_fasta='result') -> str:
+    """
+    The main aim of function is to select genes that flanking the genes of main interest(*genes argument)
+    
+    The function takes a file with gbk extention as input_gbk argument
+
+    The function output selected genes in fasta file named as output_fasta argument
+
+    It saves output file in a current directory
+
+    Arguments:
+
+    - input_gbk(str): the name of gbk file to be processed
+
+    - *genes(str): names of any number of genes to be studied
+
+    - n_before(int): a number of upstream flanking genes 
+
+    - n_after(int): a number of downstream flanking genes 
+    
+    - output_fasta(str): the name for output file with obtained result (Optional)
+    By default output_fasta = 'result'
+    Argument output_fasta must be inputed without fasta extension
+    Example: output_filename='processed_seqs'  # processed_seqs.fasta
+    
+    Return:
+    - file: file with fasta extension containing names and protein sequences of genes flanking the genes of interest
+    """
     annot_genes = []
     genes_information = []
     with open(input_gbk) as f:
