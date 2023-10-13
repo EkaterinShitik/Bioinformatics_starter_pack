@@ -37,7 +37,10 @@ def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta='result') 
         (file_output.append(name) or 
         file_output.append(seq))
     current_directory = os.getcwd()
-    with open(os.path.join(current_directory, output_fasta + '.fasta'), mode='w') as file:
+    name_fasta = output_fasta + '.fasta'
+    if os.path.exists(os.path.join(current_directory, name_fasta)):
+        raise ValueError('File with such name exists! Change output_fasta arg!')
+    with open(os.path.join(current_directory, name_fasta), mode='w') as file:
         for line in file_output:
             file.write(line + '\n')
 
@@ -106,6 +109,9 @@ def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_af
                     result.append(name_next_for_fasta)
                     result.append(seq_next_gene)
     current_directory = os.getcwd()
-    with open(os.path.join(current_directory, output_fasta + '.fasta'), mode='w') as file:
+    name_fasta = output_fasta + '.fasta'
+    if os.path.exists(os.path.join(current_directory, name_fasta)):
+        raise ValueError('File with such name exists! Change output_fasta arg!')
+    with open(os.path.join(current_directory, name_fasta), mode='w') as file:
         for line in result:
             file.write(line + '\n') 
