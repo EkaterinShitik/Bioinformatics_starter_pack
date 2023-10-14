@@ -1,7 +1,7 @@
 import os
 
 
-def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta='result') -> str:
+def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta='result') -> None:
     """
     The function converts DNA/RNA/protein sequences from multiline format to one line
 
@@ -45,7 +45,7 @@ def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta='result') 
             file.write(line + '\n')
 
 
-def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_after=1, output_fasta='result') -> str:
+def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_after=1, output_fasta='result') -> None:
     """
     The main aim of function is to select genes that flanking the genes of main interest(*genes argument)
     
