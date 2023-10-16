@@ -80,7 +80,7 @@ def gc_count(seq: str, gc_counter=0) -> str:
     for nucl in seq:
         if nucl in ('G', 'C', 'g', 'c'):
             gc_counter += 1
-    gc_share = gc_counter/len(seq)*100
+    gc_share = gc_counter / len(seq) * 100
     return str(gc_share) + '%'
 
 
