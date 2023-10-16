@@ -194,7 +194,7 @@ def select_fastq(input_path: str,
                     seqs[name] = []
             else:
                 seqs[name].append(line)
-    if type(length_bounds) == int or type(length_bounds) == float:
+    if type(length_bounds) == int:
         length_bounds = 0, length_bounds
     if type(gc_bounds) == int or type(gc_bounds) == float: 
         gc_bounds = 0, gc_bounds
