@@ -18,7 +18,7 @@ def is_in_gc_bounds(seq: str, gc_bounds: tuple, gc_counter=0) -> bool:
     for nucl in seq:
         if nucl in ('G', 'C', 'g', 'c'):
             gc_counter += 1
-    gc_share = gc_counter/len(seq)*100 
+    gc_share = gc_counter / len(seq) * 100 
     return gc_min <= gc_share <= gc_max
 
 
@@ -60,6 +60,6 @@ def is_above_quality_threshold(quality_scores: str, quality_threshold: float, su
     length_code = len(quality_scores)
     for symbol in quality_scores:
         sum_phred += (ord(symbol) - 33)
-        mean_quality = sum_phred/length_code
+        mean_quality = sum_phred / length_code
     return mean_quality >= quality_threshold
     
