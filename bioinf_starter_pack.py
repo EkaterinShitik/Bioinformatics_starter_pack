@@ -7,7 +7,8 @@ import src.fastq_tools as fastq_tools
 
 def run_dna_rna_tools(*seqs: str, func: str) -> list[str]:
     """
-    Main function to process nucleotide sequences by one of the developed tools.\n
+    Main function to process nucleotide sequences by one of the developed tools
+    
     Run one procedure at a time:
     - Reverse the sequences from 5'-3' direction to 3'-5' and vice versa
     - Output the complementary sequences
@@ -55,7 +56,8 @@ def run_dna_rna_tools(*seqs: str, func: str) -> list[str]:
 
 def run_protein_tools(*sequences: str, **kwargs: str):
     """
-    Main function to process protein sequence by one of the developed tools.\n
+    Main function to process protein sequence by one of the developed tools
+    
     Run one procedure at a time:
     - Search for conserved amino acids residues in protein sequence
     - Search for alternative frames in a protein sequences
@@ -63,9 +65,12 @@ def run_protein_tools(*sequences: str, **kwargs: str):
     - Reverse the protein sequences from one-letter to three-letter format and vice-versa
     - Define molecular weight of the protein sequences
 
-    All functions except *search_for_alt_frames* are letter case sensitive\n
-    Provide protein sequence in one letter code.\n
-    You can obtain one letter code from three letter code with *three_one_letter_code*\n
+    All functions except *search_for_alt_frames* are letter case sensitive
+    
+    Provide protein sequence in one letter code
+    
+    You can obtain one letter code from three letter code with *three_one_letter_code*
+    
     If more information needed please see README or desired docstring
 
     Arguments:
@@ -78,23 +83,27 @@ def run_protein_tools(*sequences: str, **kwargs: str):
         - 'define_molecular_weight'
 
     For 'search_for_motif' procedure provide:
-    - motif (str]: desired motif to check presense in every given sequence\n
+    - motif (str]: desired motif to check presense in every given sequence
             Example: motif='GA'
-    - overlapping (bool): count (True) or skip (False) overlapping matches. (Optional)\n
+    - overlapping (bool): count (True) or skip (False) overlapping matches. (Optional)
+    
             Example: overlapping =False
 
     For 'search_for_alt_frames' procedure provide:
-    - alt_start_aa (str]: the name of an amino acid that is encoded by alternative start codon (Optional)\n
+    - alt_start_aa (str]: the name of an amino acid that is encoded by alternative start codon (Optional)
+    
             Example: alt_start_aa='I'
 
     For 'convert_to_nucl_acids' procedure provide:
-    - nucl_acids (str]: the nucleic acid to convert to\n
-            Example: nucl_acids='RNA'\n
-                           nucl_acids='DNA'\n
+    - nucl_acids (str]: the nucleic acid to convert to
+    
+            Example: nucl_acids='RNA'
+                           nucl_acids='DNA'
                            nucl_acids='both'
 
     Return:
-    - dict: Dictionary with processed sequences. Depends on desired tool\n
+    - dict: Dictionary with processed sequences. Depends on desired tool
+    
             Please see Readme or desired docstring
     """
     procedure_arguments, procedure = protein_tools.check_and_parse_user_input(*sequences, **kwargs)
