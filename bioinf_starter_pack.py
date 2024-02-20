@@ -588,38 +588,35 @@ def run_protein_tools(*sequences: str, **kwargs: str):
     return PROCEDURES_TO_FUNCTIONS[procedure](**procedure_arguments)
 
 
-def is_in_gc_bounds(seq: str, gc_bounds: tuple) -> bool:
+def is_in_gc_bounds(seq_record: SeqRecord, gc_bounds: tuple) -> bool:
     """
-    Check if the sequence falls in the range of GC-content bounds
+    Check if the sequence is in the range of GC-content bounds
 
     Arguments:
-    - seq(Bio.SeqRecord): the sequence to check
+    - seq_record(SeqRecord): the sequence object to check
     - gc_bounds(tuple): contain minimal and maximum GC-content bounds of the main interest
-    Example: is_in_gc_bounds('AgCC', gc_bounds=(10,90))
 
     Return:
     - bool: the result of the check
     """
     gc_min, gc_max = gc_bounds[0], gc_bounds[1]
-    gc_content = SeqUtils.GC123(seq)[0]
+    gc_content = SeqUtils.GC123(seq_record)[0]
     return gc_min <= gc_content <= gc_max
 
 
-def is_in_length_bounds(seq: str, length_bounds: tuple) -> bool:
+def is_in_length_bounds(seq_record: SeqRecord, length_bounds: tuple) -> bool:
     """
-    Check if the sequence falls in the range of length bounds
+    Check if the sequence is in the range of length bounds
 
     Arguments:
-    - seq(Bio.SeqRecord): the sequence to check
+    - seq(SeqRecord): the sequence object to check
     - length_bounds(tuple): contain minimal and maximum length bounds of the main interest
-
-    Example: is_in_length_bounds('AgCC', length_bounds=(0,12000))
 
     Return:
     - bool: the result of the check
     """
     length_min, length_max = length_bounds[0], length_bounds[1]
-    return length_min <= len(seq) <= length_max
+    return length_min <= len(seq_record) <= length_max
 
 
 def is_above_quality_threshold(seq_record: SeqRecord, quality_threshold: float) -> bool:
@@ -628,10 +625,8 @@ def is_above_quality_threshold(seq_record: SeqRecord, quality_threshold: float) 
     To convert quality values, the function uses phred+33
 
     Arguments:
-    - seq_record(Bio.SeqRecord): object SeqRecord that contain fastq information
+    - seq_record(Bio.SeqRecord): the sequence object to check
     - quality_threshold(int or float): the quality threshold of the interest
-
-    Example: is_above_quality_threshold('AgCC', quality_threshold=20)
 
     Return:
     - bool: the result of the check
@@ -646,11 +641,11 @@ def filter_fastq(input_path: str,
                  length_bounds=(0, 2**32),
                  quality_threshold=0) -> None:
     """
-    Main function to select fragmnets in FASTQ format according to three main requirements:
-    -fall in the range of GC-content bounds
+    Main function to select reads in FASTQ format according to three main requirements:
+    -correspondence to the range of GC-content bounds
     The range of GC-content bounds is determined with gc_bounds argument
    
-    -falls in the range of length bounds
+    -correspondence to the range of length bounds
     The range of length bounds is determined with length_bounds argument
 
     -exceeds the quality threshold of the interest
@@ -726,9 +721,8 @@ def filter_fastq(input_path: str,
     sequences = SeqIO.parse(input_path, "fastq")
     good_reads = []
     for seq_record in sequences:
-        seq = seq_record.seq
-        if (is_in_gc_bounds(seq, gc_bounds) and
-            is_in_length_bounds(seq, length_bounds) and
+        if (is_in_gc_bounds(seq_record, gc_bounds) and
+            is_in_length_bounds(seq_record, length_bounds) and
             is_above_quality_threshold(seq_record, quality_threshold)):
             good_reads += [seq_record]
     if len(good_reads) == 0:
