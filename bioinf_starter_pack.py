@@ -1,4 +1,7 @@
 import os
+import numpy as np
+
+from Bio import SeqIO, SeqRecord, SeqUtils
 from typing import Optional
 
 COMPLEMENT_RULE = 'ATUCG'.maketrans('AaTtUuCcGg', 'TtAaAaGgCc')
@@ -229,7 +232,7 @@ FUNCTIONS_NA = {
 }
 
 
-def run_dna_rna_tools(*seqs: str, func: str) -> list[str]:
+def run_dna_rna_tools(*seqs: str, func: str) -> list:
     """
     Main function to process nucleotide sequences by one of the developed tools
     
@@ -346,9 +349,9 @@ def define_molecular_weight(sequences: str) -> dict:
     return sequences_weights
 
 
-def search_for_motifs(
-        sequences: (tuple[str] or list[str]), motif: str, overlapping: bool
-) -> dict:
+def search_for_motifs(sequences: str,
+                      motif: str,
+                      overlapping: bool) -> dict:
     """
     Search for motifs - conserved amino acids residues in protein sequence
 
@@ -585,37 +588,29 @@ def run_protein_tools(*sequences: str, **kwargs: str):
     return PROCEDURES_TO_FUNCTIONS[procedure](**procedure_arguments)
 
 
-def is_in_gc_bounds(seq: str, gc_bounds: tuple, gc_counter=0) -> bool:
+def is_in_gc_bounds(seq: str, gc_bounds: tuple) -> bool:
     """
     Check if the sequence falls in the range of GC-content bounds
-    The range of GC-content bounds is determined with gc_bounds argument
 
     Arguments:
-    - seq(str): the sequence to check
+    - seq(Bio.SeqRecord): the sequence to check
     - gc_bounds(tuple): contain minimal and maximum GC-content bounds of the main interest
-    - gc_counter(int): an additional argument to count GC-content that by default is 0 \n
-    Do not change the last gc_counter argument!
-
     Example: is_in_gc_bounds('AgCC', gc_bounds=(10,90))
 
     Return:
     - bool: the result of the check
     """
     gc_min, gc_max = gc_bounds[0], gc_bounds[1]
-    for nucl in seq:
-        if nucl in ('G', 'C', 'g', 'c'):
-            gc_counter += 1
-    gc_share = gc_counter / len(seq) * 100
-    return gc_min <= gc_share <= gc_max
+    gc_content = SeqUtils.GC123(seq)[0]
+    return gc_min <= gc_content <= gc_max
 
 
 def is_in_length_bounds(seq: str, length_bounds: tuple) -> bool:
     """
     Check if the sequence falls in the range of length bounds
-    The range of length bounds is determined with length_bounds argument
 
     Arguments:
-    - seq(str): the sequence to check
+    - seq(Bio.SeqRecord): the sequence to check
     - length_bounds(tuple): contain minimal and maximum length bounds of the main interest
 
     Example: is_in_length_bounds('AgCC', length_bounds=(0,12000))
@@ -627,37 +622,31 @@ def is_in_length_bounds(seq: str, length_bounds: tuple) -> bool:
     return length_min <= len(seq) <= length_max
 
 
-def is_above_quality_threshold(quality_scores: str, quality_threshold: float, sum_phred=0) -> bool:
+def is_above_quality_threshold(seq_record: SeqRecord, quality_threshold: float) -> bool:
     """
     Check if the mean of the sequence quality values in FASTQ exceeds the quality threshold of the interest
-    The quality threshold is determined with quality_threshold argument
     To convert quality values, the function uses phred+33
 
     Arguments:
-    - quality_scores(str): field 4 of FASTQ that encodes the quality values of the sequence
+    - seq_record(Bio.SeqRecord): object SeqRecord that contain fastq information
     - quality_threshold(int or float): the quality threshold of the interest
-    - sum_phred(int): an additional argument to count phred+33 values that by default is 0\n
-    Do not change the last sum_phred argument!
 
-    Example: is_above_quality_threshold('BFFFFFFFB@B@A<@D', quality_threshold=20)
+    Example: is_above_quality_threshold('AgCC', quality_threshold=20)
 
     Return:
     - bool: the result of the check
     """
-    length_code = len(quality_scores)
-    for symbol in quality_scores:
-        sum_phred += (ord(symbol) - 33)
-        mean_quality = sum_phred / length_code
-    return mean_quality >= quality_threshold
+    quality = np.mean(seq_record.letter_annotations["phred_quality"])
+    return quality >= quality_threshold
 
 
-def select_fastq(input_path: str,
+def filter_fastq(input_path: str,
                  output_filename: Optional[str] = None,
                  gc_bounds=(0, 100),
                  length_bounds=(0, 2**32),
                  quality_threshold=0) -> None:
     """
-    Main function to select fragmnets in FASTQ format according to three main requirements:\n
+    Main function to select fragmnets in FASTQ format according to three main requirements:
     -fall in the range of GC-content bounds
     The range of GC-content bounds is determined with gc_bounds argument
    
@@ -671,7 +660,7 @@ def select_fastq(input_path: str,
 
     Function output the result of checking in a file that is named according to output_filename(Optional).
 
-    The output file also has fatq extension.
+    The output file also has fastq extension.
 
     The output file is saved in the 'fastq_filtrator_results' directory.
 
@@ -730,51 +719,30 @@ def select_fastq(input_path: str,
     For more information please see README
     
     """
-    seqs = {}
-    with open(input_path) as f:
-        name = f.readline().strip()
-        seqs[name] = []
-        for line in f:
-            line = line.strip()
-            if line.startswith('@'):
-                if len(seqs[name]) == 2:
-                    seqs[name].append(line)
-                else:
-                    name = line
-                    seqs[name] = []
-            else:
-                seqs[name].append(line)
     if type(length_bounds) is int:
         length_bounds = 0, length_bounds
     if type(gc_bounds) is int or type(gc_bounds) is float:
         gc_bounds = 0, gc_bounds
-    result = {}
-    for name in seqs.keys():
-        seq = seqs[name][0]
-        quality_scores = seqs[name][2]
+    sequences = SeqIO.parse(input_path, "fastq")
+    good_reads = []
+    for seq_record in sequences:
+        seq = seq_record.seq
         if (is_in_gc_bounds(seq, gc_bounds) and
             is_in_length_bounds(seq, length_bounds) and
-            is_above_quality_threshold(quality_scores, quality_threshold)):
-            result[name] = seqs[name]
-    if len(result) == 0:
-        return 'There are no sequences suited to requirements'
-    file_output = []
-    for name, [seq, comment, quality] in result.items():
-        (file_output.append(name) or 
-         file_output.append(seq) or
-         file_output.append(comment) or
-         file_output.append(quality))  # make list
-    current_directory = os.getcwd()
-    output_path = os.path.join(current_directory, 'fastq_filtrator_results')  # determine the path to files
-    if not (os.path.exists(output_path)):
-        os.mkdir(output_path)
+            is_above_quality_threshold(seq_record, quality_threshold)):
+            good_reads += [seq_record]
+    if len(good_reads) == 0:
+        raise ValueError('There are no sequences suited to requirements')
     if output_filename is None:
-        input_filename = os.path.split(input_path)[-1]  # process output_filename
+        input_filename = os.path.split(input_path)[-1]
         output_filename = input_filename
     if not (output_filename.endswith('.fastq')):
         output_filename = output_filename + '.fastq'
-    if os.path.exists(os.path.join(output_path, output_filename)):
+    current_directory = os.getcwd()
+    path = os.path.join(current_directory, 'fastq_filtrator_results')  # determine the path to files
+    if not (os.path.exists(path)):
+        os.mkdir(path)
+    output_path = os.path.join(path, output_filename)
+    if os.path.exists(output_path):
         raise ValueError('File with such name exists! Change output_filename arg!')
-    with open(os.path.join(output_path, output_filename), mode='w') as file:  # write in a new file
-        for line in file_output:
-            file.write(line + '\n') 
+    SeqIO.write(good_reads, output_path, "fastq")
