@@ -3,9 +3,11 @@ import numpy as np
 
 from Bio import SeqIO, SeqRecord, SeqUtils
 from typing import Optional
+from abc import ABC, abstractmethod
 
-COMPLEMENT_RULE = 'ATUCG'.maketrans('AaTtUuCcGg', 'TtAaAaGgCc')
-RULE_OF_TRANSCRIPTION = 'AUCG'.maketrans('UuTt', 'TtUu')
+DNA_COMPLEMENT_RULE = 'ATCG'.maketrans('AaTtCcGg', 'TtAaGgCc')
+RNA_COMPLEMENT_RULE = 'AUCG'.maketrans('AaUuCcGg', 'UuAaGgCc')
+RULE_OF_TRANSCRIPTION = 'AUCG'.maketrans('Tt', 'Uu')
 AMINO_ACIDS = {
     'A': 'Ala',
     'C': 'Cys',
@@ -113,172 +115,6 @@ AMINO_ACID_WEIGHT = {
     'Y': 181.19,
 }
 RULE_OF_TRANSLATION = 'MTW'.maketrans(TRANSLATION_CODE)
-
-
-def reverse(seq: str) -> str:
-    """
-    Reverse the sequence from 5'-3' direction to 3'-5' and vice versa
-
-    Arguments:
-    - seq(str): the sequence to change
-
-    Return:
-    - str: the changed sequence
-    """
-    reverse_seq = seq[::-1]
-    return reverse_seq
-
-
-def complement(seq: str) -> str:
-    """
-    Output the complementary sequence
-    The complementarity rule could be found here:
-    https://en.wikipedia.org/wiki/Complementarity_(molecular_biology)
-
-    Arguments:
-    - seq(str): the sequence to change
-
-    Return:
-    - str: the changed sequence
-    """
-    complement_seq = seq.translate(COMPLEMENT_RULE)
-    return complement_seq
-
-
-def reverse_complement(seq: str) -> str:
-    """
-    Output the complementary sequence in reverse direction
-
-    This function uses two other functions:
-    - complement(seq): output the complementary sequence
-    - reverse(seq): reverse the sequence from 5'-3' direction to 3'-5' and vice versa
-
-    Arguments:
-    - seq(str): the sequence to change
-
-    Return:
-    - str: the changed sequence
-    """
-    reverse_complement_seq = reverse(complement(seq))
-    return reverse_complement_seq
-
-
-def transcribe(seq: str) -> str:
-    """
-    Translate RNA sequence to DNA and vice versa
-
-    Arguments:
-    - seq(str): the sequence to change
-
-    Return:
-    - str: the changed sequence
-    """
-    transcribe_seq = seq.translate(RULE_OF_TRANSCRIPTION)
-    return transcribe_seq
-
-
-def gc_count(seq: str, gc_counter=0) -> str:
-    """
-    Count the GC-content in the sequence
-
-    Arguments:
-    - seq(str): the sequence to count GC-content
-    - gc_counter(int): an additional argument to count GC-content that by default is 0
-
-    Do not change the last gc_counter argument!
-
-    Return:
-    - str: the percentage of GC-content in the sequence
-    """
-    for nucl in seq:
-        if nucl in ('G', 'C', 'g', 'c'):
-            gc_counter += 1
-    gc_share = gc_counter / len(seq) * 100
-    return str(gc_share) + '%'
-
-
-def is_dna(seq: str) -> bool:
-    """
-    Check if the sequence is DNA
-
-    Arguments:
-    - seq(str): the sequence to check
-
-    Return:
-    - bool: the result of the check
-    """
-    return set(seq) <= set('AaGgCcTt')
-
-
-def is_rna(seq: str) -> bool:
-    """
-    Check if the sequence is RNA
-
-    Arguments:
-    - seq(str): the sequence to check
-
-    Return:
-    - bool: the result of the check
-    """
-    return set(seq) <= set('AaGgCcUu')
-
-
-FUNCTIONS_NA = {
-    'transcribe': transcribe,
-    'reverse': reverse,
-    'complement': complement,
-    'reverse_complement': reverse_complement,
-    'gc_count': gc_count
-}
-
-
-def run_dna_rna_tools(*seqs: str, func: str) -> list:
-    """
-    Main function to process nucleotide sequences by one of the developed tools
-    
-    Run one procedure at a time:
-    - Reverse the sequences from 5'-3' direction to 3'-5' and vice versa
-    - Output the complementary sequences
-    - Output the complementary sequences in reverse direction
-    - Translate RNA sequences to DNA and vice versa
-    - Count the GC-content in the sequences
-
-    Arguments:
-    - *seqs(str): sequences to process
-    - func(str): the operation of the interest:
-        - 'transcribe'
-        - 'reverse'
-        - 'complement'
-        - 'reverse_complement'
-        - 'gc_count'
-
-    All of the described func arguments correspond to following functions:
-    - transcribe(seq)
-    - reverse(seq)
-    - complement(seq)
-    - reverse_complement(seq)
-    - gc_count(seq: str, gc_counter=0)
-
-    All functions except *gc_count* are letter case sensitive
-
-    Return:
-    - list[str]: the result of processing several sequences
-    - str: the result of processing one sequence
-
-    For more details see README
-    """
-    result = []
-    if func not in FUNCTIONS_NA:
-        raise ValueError('Invalid operation!')
-    for seq in seqs:
-        if not (is_dna(seq)) and not (is_rna(seq)):
-            number_seq = seqs.index(seq) + 1
-            error = 'Sequence of number ' + str(number_seq) + ' is incorrect!'
-            raise ValueError(error)
-        result.append(FUNCTIONS_NA[func](seq))
-    if len(result) == 1:
-        return result[0]
-    return result
 
 
 def three_one_letter_code(sequences: str) -> list:
@@ -740,3 +576,140 @@ def filter_fastq(input_path: str,
     if os.path.exists(output_path):
         raise ValueError('File with such name exists! Change output_filename arg!')
     SeqIO.write(good_reads, output_path, "fastq")
+
+# Задание по созданию классов
+
+class BiologicalSequence(ABC):
+    @abstractmethod
+    def __len__(self):  # Нужны ли self в абстрактных методах?
+        pass
+
+    @abstractmethod
+    def __getitem__(self, item):
+        pass
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+    @abstractmethod
+    def is_alphabet_correct(self):
+        pass
+
+
+class NucleicAcidSequence(BiologicalSequence):
+    def __init__(self, seq):
+        self.seq = seq
+
+    def __len__(self):
+        return len(self.seq)
+
+    def __getitem__(self, item):
+        return self.seq[item]
+
+    def __str__(self):
+        return self.seq
+
+    def is_dna(self) -> bool:
+        """
+        Check if the sequence is DNA
+
+        Arguments:
+        - self: the sequence object to check
+
+        Return:
+        - bool: the result of the check
+        """
+        return set(self.seq) <= set('AaGgCcTt')
+
+    def is_rna(self) -> bool:
+        """
+        Check if the sequence is RNA
+
+        Arguments:
+        - self: the sequence object to check
+
+        Return:
+        - bool: the result of the check
+        """
+        return set(self.seq) <= set('AaGgCcUu')
+
+    def is_alphabet_correct(self) -> bool:
+        """
+        The function check does the sequence contain standard A, G, C, T, U nucleotides
+        Returns: bool - the result of check
+        """
+        if type(self) is DNASequence:
+            return self.is_dna()
+        elif type(self) is RNASequence:
+            return self.is_rna()
+
+    def complement(self):
+        """
+        Output the complementary sequence
+        The complementarity rule could be found here:
+        https://en.wikipedia.org/wiki/Complementarity_(molecular_biology)
+
+        Arguments:
+        - self: the sequence obj to change
+
+        Return: DNAsequence or RNAsequence - the changed sequence object
+        """
+        if type(self) is DNASequence:
+            complement = self.seq.translate(DNA_COMPLEMENT_RULE)
+            complement_seq = DNASequence(complement)
+        elif type(self) is RNASequence:
+            complement = self.seq.translate(RNA_COMPLEMENT_RULE)
+            complement_seq = (RNASequence(complement))
+        return complement_seq
+
+    def gc_content(self) -> float:
+        """
+        Check the gc content in the sequence object
+        Returns: int - the percentage of GC content
+        """
+        gc_share = SeqUtils.GC123(self.seq)[0]
+        return gc_share
+
+
+class DNASequence(NucleicAcidSequence):
+    def __init__(self, seq):
+        super().__init__(seq)
+        if not(super().is_alphabet_correct()):
+            raise ValueError('The sequence does not correspond to DNA')
+
+    def transcribe(self):
+        """
+        Translate DNA sequence to RNA
+
+        Arguments:
+        - self: the sequence object to change
+
+        Return: str: RNASequence object
+        """
+        transcribe_seq = self.seq.translate(RULE_OF_TRANSCRIPTION)
+        rna_seq = RNASequence(transcribe_seq)
+        return rna_seq
+
+
+class RNASequence(NucleicAcidSequence):
+    def __init__(self, seq):
+        super().__init__(seq)
+        if not (super().is_alphabet_correct()):
+            raise ValueError('The sequence does not correspond to RNA')
+
+seq = DNASequence('ATGC')
+print(seq)
+print(seq.is_alphabet_correct())
+print(seq.gc_content())
+print(seq.complement())
+print(type(seq.complement()))
+print(seq.transcribe())
+print(type(seq.transcribe()))
+
+
+rna_seq = RNASequence('AUGC')
+print(rna_seq.is_alphabet_correct())
+print(rna_seq.gc_content())
+print(rna_seq.complement())
+print(type(rna_seq.complement()))
