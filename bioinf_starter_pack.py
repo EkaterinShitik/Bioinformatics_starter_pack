@@ -362,23 +362,3 @@ class AminoAcidSequence(BiologicalSequence):
                 alt_frame = AminoAcidSequence(alt_frame)
                 alternative_frames.append(alt_frame)
         return alternative_frames
-
-seq = DNASequence('ATGC')
-print(seq)
-print(seq.is_alphabet_correct())
-print(seq.gc_content())
-print(seq.complement())
-print(type(seq.complement()))
-print(seq.transcribe())
-print(type(seq.transcribe()))
-
-
-rna_seq = RNASequence('AUGC')
-print(rna_seq.is_alphabet_correct())
-print(rna_seq.gc_content())
-print(rna_seq.complement())
-print(type(rna_seq.complement()))
-
-protein = AminoAcidSequence('MYRHHWWMYYYYYYY')
-print(protein)
-print(protein.search_for_alt_frames())
