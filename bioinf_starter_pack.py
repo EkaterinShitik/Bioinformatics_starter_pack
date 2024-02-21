@@ -161,6 +161,9 @@ def filter_fastq(input_path: str,
 
 
 class BiologicalSequence(ABC):
+    """
+    The abstract class for biological sequences
+    """
     @abstractmethod
     def __len__(self):
         pass
@@ -182,10 +185,13 @@ class BiologicalSequence(ABC):
 
 
 class NucleicAcidSequence(BiologicalSequence):
+    """
+    Class for nucleic acids
+    """
     def __init__(self, seq):
         self.seq = seq
         self.dna_complement_rule = 'ATCG'.maketrans('AaTtCcGg', 'TtAaGgCc')
-        self.rna_complement_rule = 'AUCG'.maketrans('Tt', 'Uu')
+        self.rna_complement_rule = 'AUCG'.maketrans('AaUuCcGg', 'UuAaGgCc')
 
     def __len__(self):
         return len(self.seq)
@@ -242,7 +248,7 @@ class NucleicAcidSequence(BiologicalSequence):
         Arguments:
         - self: the sequence obj to change
 
-        Return: DNAsequence or RNAsequence - the changed sequence object
+        Return: DNAsequence or RNAsequence - the result sequence object
         """
         if type(self) is DNASequence:
             complement = self.seq.translate(self.dna_complement_rule)
@@ -262,6 +268,9 @@ class NucleicAcidSequence(BiologicalSequence):
 
 
 class DNASequence(NucleicAcidSequence):
+    """
+    The class for DNA sequences
+    """
     def __init__(self, seq):
         super().__init__(seq)
         self.rule_transcription = 'AUCG'.maketrans('Tt', 'Uu')
