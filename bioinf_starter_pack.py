@@ -239,7 +239,7 @@ class NucleicAcidSequence(BiologicalSequence):
         elif type(self) is RNASequence:
             return self.is_rna()
 
-    def complement(self) -> NucleicAcidSequence:
+    def complement(self):
         """
         Output the complementary sequence
         The complementarity rule could be found here:
@@ -263,7 +263,11 @@ class NucleicAcidSequence(BiologicalSequence):
         Check the gc content in the sequence object
         Returns: int - the percentage of GC content
         """
-        gc_share = SeqUtils.gc_fraction(self.seq)
+        gc_counter = 0
+        for nucl in self.seq:
+            if nucl in ('G', 'C', 'g', 'c'):
+                gc_counter += 1
+        gc_share = gc_counter / len(self.seq) * 100
         return gc_share
 
 
@@ -277,7 +281,7 @@ class DNASequence(NucleicAcidSequence):
         if not(super().is_alphabet_correct()):
             raise ValueError('The sequence does not correspond to DNA')
 
-    def transcribe(self) -> RNASequence:
+    def transcribe(self):
         """
         Transcribe DNA sequence to RNA
 
@@ -358,8 +362,6 @@ class AminoAcidSequence(BiologicalSequence):
                 alt_frame = AminoAcidSequence(alt_frame)
                 alternative_frames.append(alt_frame)
         return alternative_frames
-
-
 
 seq = DNASequence('ATGC')
 print(seq)
