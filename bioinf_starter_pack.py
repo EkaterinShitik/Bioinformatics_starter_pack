@@ -239,7 +239,7 @@ class NucleicAcidSequence(BiologicalSequence):
         elif type(self) is RNASequence:
             return self.is_rna()
 
-    def complement(self):
+    def complement(self) -> NucleicAcidSequence:
         """
         Output the complementary sequence
         The complementarity rule could be found here:
@@ -277,9 +277,9 @@ class DNASequence(NucleicAcidSequence):
         if not(super().is_alphabet_correct()):
             raise ValueError('The sequence does not correspond to DNA')
 
-    def transcribe(self):
+    def transcribe(self) -> RNASequence:
         """
-        Translate DNA sequence to RNA
+        Transcribe DNA sequence to RNA
 
         Arguments:
         - self: the sequence object to change
@@ -292,12 +292,19 @@ class DNASequence(NucleicAcidSequence):
 
 
 class RNASequence(NucleicAcidSequence):
+    """
+    The class for RNA sequences
+    """
     def __init__(self, seq):
         super().__init__(seq)
         if not (super().is_alphabet_correct()):
             raise ValueError('The sequence does not correspond to RNA')
 
+
 class AminoAcidSequence(BiologicalSequence):
+    """
+    The class for amino acid sequences
+    """
     def __init__(self, seq):
         self.seq = seq
         self.aa_alphabet = 'ACDEFGHIKLMNPQRSTVWY'
@@ -316,7 +323,7 @@ class AminoAcidSequence(BiologicalSequence):
     def __repr__(self):
         return self.seq
 
-    def is_alphabet_correct(self):
+    def is_alphabet_correct(self) -> bool:
         """
         The function checks if the sequence object contains standard amino acid code
         Returns: list of alternative frames (AminoAcidSequence)
@@ -373,4 +380,3 @@ print(type(rna_seq.complement()))
 protein = AminoAcidSequence('MYRHHWWMYYYYYYY')
 print(protein)
 print(protein.search_for_alt_frames())
-# Очень странный вывод GC - нужно с этим разобраться!
