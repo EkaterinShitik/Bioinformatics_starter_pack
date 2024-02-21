@@ -18,7 +18,7 @@ def is_in_gc_bounds(seq_record: SeqRecord, gc_bounds: tuple) -> bool:
     - bool: the result of the check
     """
     gc_min, gc_max = gc_bounds[0], gc_bounds[1]
-    gc_content = SeqUtils.GC123(seq_record)[0]
+    gc_content = SeqUtils.gc_fraction(seq_record.seq)
     return gc_min <= gc_content <= gc_max
 
 
@@ -162,7 +162,7 @@ def filter_fastq(input_path: str,
 
 class BiologicalSequence(ABC):
     @abstractmethod
-    def __len__(self):  # Нужны ли self в абстрактных методах?
+    def __len__(self):
         pass
 
     @abstractmethod
@@ -257,7 +257,7 @@ class NucleicAcidSequence(BiologicalSequence):
         Check the gc content in the sequence object
         Returns: int - the percentage of GC content
         """
-        gc_share = SeqUtils.GC123(self.seq)[0]
+        gc_share = SeqUtils.gc_fraction(self.seq)
         return gc_share
 
 
