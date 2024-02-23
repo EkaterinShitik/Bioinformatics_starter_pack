@@ -239,7 +239,7 @@ class NucleicAcidSequence(BiologicalSequence):
         elif type(self) is RNASequence:
             return self.is_rna()
 
-    def complement(self) -> object:
+    def complement(self) -> BiologicalSequence:
         """
         Output the complementary sequence
         The complementarity rule could be found here:
@@ -271,6 +271,16 @@ class NucleicAcidSequence(BiologicalSequence):
         return gc_share
 
 
+class RNASequence(NucleicAcidSequence):
+    """
+    The class for RNA sequences
+    """
+    def __init__(self, seq):
+        super().__init__(seq)
+        if not (super().is_alphabet_correct()):
+            raise ValueError('The sequence does not correspond to RNA')
+
+
 class DNASequence(NucleicAcidSequence):
     """
     The class for DNA sequences
@@ -281,7 +291,7 @@ class DNASequence(NucleicAcidSequence):
         if not(super().is_alphabet_correct()):
             raise ValueError('The sequence does not correspond to DNA')
 
-    def transcribe(self) -> object:
+    def transcribe(self) -> RNASequence:
         """
         Transcribe DNA sequence to RNA
 
@@ -293,16 +303,6 @@ class DNASequence(NucleicAcidSequence):
         transcribe_seq = self.seq.translate(self.rule_transcription)
         rna_seq = RNASequence(transcribe_seq)
         return rna_seq
-
-
-class RNASequence(NucleicAcidSequence):
-    """
-    The class for RNA sequences
-    """
-    def __init__(self, seq):
-        super().__init__(seq)
-        if not (super().is_alphabet_correct()):
-            raise ValueError('The sequence does not correspond to RNA')
 
 
 class AminoAcidSequence(BiologicalSequence):
