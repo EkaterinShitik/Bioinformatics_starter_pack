@@ -239,7 +239,7 @@ class NucleicAcidSequence(BiologicalSequence):
         elif type(self) is RNASequence:
             return self.is_rna()
 
-    def complement(self):
+    def complement(self) -> object:
         """
         Output the complementary sequence
         The complementarity rule could be found here:
@@ -281,7 +281,7 @@ class DNASequence(NucleicAcidSequence):
         if not(super().is_alphabet_correct()):
             raise ValueError('The sequence does not correspond to DNA')
 
-    def transcribe(self):
+    def transcribe(self) -> object:
         """
         Transcribe DNA sequence to RNA
 
@@ -362,5 +362,3 @@ class AminoAcidSequence(BiologicalSequence):
                 alt_frame = AminoAcidSequence(alt_frame)
                 alternative_frames.append(alt_frame)
         return alternative_frames
-
-filter_fastq('example_fastq.fastq', 'result5', gc_bounds=(10,100))
