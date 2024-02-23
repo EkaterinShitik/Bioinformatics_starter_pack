@@ -199,8 +199,6 @@ class NucleicAcidSequence(BiologicalSequence):
     """
     def __init__(self, seq):
         self.seq = seq
-        self.dna_complement_rule = 'ATCG'.maketrans('AaTtCcGg', 'TtAaGgCc')
-        self.rna_complement_rule = 'AUCG'.maketrans('AaUuCcGg', 'UuAaGgCc')
 
     def __len__(self):
         return len(self.seq)
@@ -214,30 +212,6 @@ class NucleicAcidSequence(BiologicalSequence):
     def __repr__(self):
         return self.seq
 
-    def is_dna(self) -> bool:
-        """
-        Check if the sequence is DNA
-
-        Arguments:
-        - self: the sequence object to check
-
-        Return:
-        - bool: the result of the check
-        """
-        return set(self.seq) <= set('AaGgCcTt')
-
-    def is_rna(self) -> bool:
-        """
-        Check if the sequence is RNA
-
-        Arguments:
-        - self: the sequence object to check
-
-        Return:
-        - bool: the result of the check
-        """
-        return set(self.seq) <= set('AaGgCcUu')
-
     def is_alphabet_correct(self) -> bool:
         """
         The function check does the sequence contain
@@ -245,10 +219,7 @@ class NucleicAcidSequence(BiologicalSequence):
 
         Returns: bool - the result of check
         """
-        if type(self) is DNASequence:
-            return self.is_dna()
-        elif type(self) is RNASequence:
-            return self.is_rna()
+        return type(self).is_correct(self)
 
     def complement(self) -> BiologicalSequence:
         """
@@ -261,12 +232,8 @@ class NucleicAcidSequence(BiologicalSequence):
 
         Return: DNAsequence or RNAsequence - the result sequence object
         """
-        if type(self) is DNASequence:
-            complement = self.seq.translate(self.dna_complement_rule)
-            complement_seq = DNASequence(complement)
-        elif type(self) is RNASequence:
-            complement = self.seq.translate(self.rna_complement_rule)
-            complement_seq = (RNASequence(complement))
+        complement = self.seq.translate(type(self).rule_complement)
+        complement_seq = type(self)(complement)
         return complement_seq
 
     def gc_content(self) -> float:
@@ -286,21 +253,49 @@ class RNASequence(NucleicAcidSequence):
     """
     The class for RNA sequences
     """
+    rule_complement = 'AUCG'.maketrans('AaUuCcGg', 'UuAaGgCc')
+
     def __init__(self, seq):
         super().__init__(seq)
         if not (super().is_alphabet_correct()):
             raise ValueError('The sequence does not correspond to RNA')
+
+    def is_correct(self) -> bool:
+        """
+        Check if the sequence is RNA
+
+        Arguments:
+        - self: the sequence object to check
+
+        Return:
+        - bool: the result of the check
+        """
+        return set(self.seq) <= set('AaGgCcUu')
 
 
 class DNASequence(NucleicAcidSequence):
     """
     The class for DNA sequences
     """
+    rule_complement = 'ATCG'.maketrans('AaTtCcGg', 'TtAaGgCc')
+    rule_transcription = 'AUCG'.maketrans('Tt', 'Uu')
+
     def __init__(self, seq):
         super().__init__(seq)
-        self.rule_transcription = 'AUCG'.maketrans('Tt', 'Uu')
         if not (super().is_alphabet_correct()):
             raise ValueError('The sequence does not correspond to DNA')
+
+    def is_correct(self) -> bool:
+        """
+        Check if the sequence is DNA
+
+        Arguments:
+        - self: the sequence object to check
+
+        Return:
+        - bool: the result of the check
+        """
+        return set(self.seq) <= set('AaGgCcTt')
 
     def transcribe(self) -> RNASequence:
         """
@@ -320,9 +315,10 @@ class AminoAcidSequence(BiologicalSequence):
     """
     The class for amino acid sequences
     """
+    aa_alphabet = 'ACDEFGHIKLMNPQRSTVWY'
+
     def __init__(self, seq):
         self.seq = seq
-        self.aa_alphabet = 'ACDEFGHIKLMNPQRSTVWY'
         if not (self.is_alphabet_correct()):
             error = 'The sequence does not match standard protein code'
             raise ValueError(error)
