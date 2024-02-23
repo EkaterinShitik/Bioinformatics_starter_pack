@@ -12,7 +12,7 @@ def is_in_gc_bounds(seq_record: SeqRecord, gc_bounds: tuple) -> bool:
 
     Arguments:
     - seq_record(SeqRecord): the sequence object to check
-    - gc_bounds(tuple): contain minimal and maximum GC-content bounds of the main interest
+    - gc_bounds(tuple): contain min and max GC-content bounds
 
     Return:
     - bool: the result of the check
@@ -28,7 +28,7 @@ def is_in_length_bounds(seq_record: SeqRecord, length_bounds: tuple) -> bool:
 
     Arguments:
     - seq(SeqRecord): the sequence object to check
-    - length_bounds(tuple): contain minimal and maximum length bounds of the main interest
+    - length_bounds(tuple): contain min and max length bounds
 
     Return:
     - bool: the result of the check
@@ -37,9 +37,12 @@ def is_in_length_bounds(seq_record: SeqRecord, length_bounds: tuple) -> bool:
     return length_min <= len(seq_record) <= length_max
 
 
-def is_above_quality_threshold(seq_record: SeqRecord, quality_threshold: float) -> bool:
+def is_above_quality_threshold(seq_record: SeqRecord,
+                               quality_threshold: float) -> bool:
     """
-    Check if the mean of the sequence quality values in FASTQ exceeds the quality threshold of the interest
+    Check if the mean of the sequence quality values in FASTQ exceeds
+    the quality threshold of the interest
+
     To convert quality values, the function uses phred+33
 
     Arguments:
@@ -59,37 +62,42 @@ def filter_fastq(input_path: str,
                  length_bounds=(0, 2**32),
                  quality_threshold=0) -> None:
     """
-    Main function to select reads in FASTQ format according to three main requirements:
+    Main function to select reads in FASTQ format according
+    to three main requirements:
+
     -correspondence to the range of GC-content bounds
     The range of GC-content bounds is determined with gc_bounds argument
-   
+
     -correspondence to the range of length bounds
     The range of length bounds is determined with length_bounds argument
 
     -exceeds the quality threshold of the interest
     The quality threshold is determined with quality_threshold argument
 
-    Function takes the path to the file in input_path argument. Use files with fastq extension only.
+    Function takes the path to the file in input_path argument.
+    Use files with fastq extension only.
 
-    Function output the result of checking in a file that is named according to output_filename(Optional).
+    Function output the result of checking in a file that is named according
+    to output_filename(Optional).
 
     The output file also has fastq extension.
 
     The output file is saved in the 'fastq_filtrator_results' directory.
 
-    If 'fastq_filtrator_results' directory doesn't exist the program creates it in a current directory.
+    If 'fastq_filtrator_results' directory doesn't exist the program creates it
+    in a current directory.
 
     Without full names use arguments in a certain order
     Example: filter_fastq(input_path, output_filename, (0,100), (0,200), 0)
-           # filter_fastq(input_path, output_filename, gc_bounds=(0,100), length_bounds=(0,200), quality_threshold=0)
-             
-             
-    In case of changing only one argument, provide its full name!
-    Example: filter_fastq(input_path, output_filename, length_bounds=(50, 100))
+           # filter_fastq(input_path, output_filename, gc_bounds=(0,100),
+             length_bounds=(0,200), quality_threshold=0)
 
-             
+    In case of changing only one argument, provide its full name!
+    Example: filter_fastq(input_path, output_filename,
+                          length_bounds=(50, 100))
+
     Arguments:
-    
+
     - input_path(str): the path to the file
 
     - output_filename(str): the name for output file with obtained result
@@ -99,13 +107,13 @@ def filter_fastq(input_path: str,
     Example: output_filename='result'  # 'result.fastq'
              output_filename='result.fastq'
 
-    - gc_bounds(tuple or int or float): contain minimal and maximum GC-content bounds
+    - gc_bounds(tuple or int or float): contain min and max GC-content bounds
     By default gc_bounds=(0,100)
     If input contains one number the function accepts it as a maximum bound
     Examples: gc_bounds=(20,40)
               gc_bounds=40  # (0,40)
 
-    - length_bounds(tuple or int or float): contain minimal and maximum length bounds
+    - length_bounds(tuple or int or float): contain mini and max length bounds
     By default length_bounds=(0,4294967296)
     If input contains one number the function accepts it as a maximum bound
     Examples: length_bounds=(10,90)
@@ -116,21 +124,21 @@ def filter_fastq(input_path: str,
     Examples: quality_threshold=10
 
     There are three functions that are used in the main function:
-    
+
     - is_in_gc_bounds(seq_record, gc_bounds):
     Check if the sequence falls in the range of GC-content bounds
-    
+
     - is_in_length_bounds(seq_record, length_bounds):
     Check if the sequence falls in the range of length bounds
-    
+
     - is_above_quality_threshold(seq_record, quality_threshold):
     Check if the mean of quality values exceeds the quality threshold
-    
+
     Return:
     - file: file with fastq extension containing selected fragments.
-    
+
     For more information please see README
-    
+
     """
     if type(length_bounds) is int:
         length_bounds = 0, length_bounds
@@ -151,12 +159,13 @@ def filter_fastq(input_path: str,
     if not (output_filename.endswith('.fastq')):
         output_filename = output_filename + '.fastq'
     current_directory = os.getcwd()
-    path = os.path.join(current_directory, 'fastq_filtrator_results')  # determine the path to files
+    path = os.path.join(current_directory, 'fastq_filtrator_results')
     if not (os.path.exists(path)):
         os.mkdir(path)
     output_path = os.path.join(path, output_filename)
     if os.path.exists(output_path):
-        raise ValueError('File with such name exists! Change output_filename arg!')
+        error = 'File with such name exists! Change output_filename arg!'
+        raise ValueError(error)
     SeqIO.write(good_reads, output_path, "fastq")
 
 
@@ -231,7 +240,9 @@ class NucleicAcidSequence(BiologicalSequence):
 
     def is_alphabet_correct(self) -> bool:
         """
-        The function check does the sequence contain standard A, G, C, T, U nucleotides
+        The function check does the sequence contain
+        standard A, G, C, T, U nucleotides
+
         Returns: bool - the result of check
         """
         if type(self) is DNASequence:
@@ -288,7 +299,7 @@ class DNASequence(NucleicAcidSequence):
     def __init__(self, seq):
         super().__init__(seq)
         self.rule_transcription = 'AUCG'.maketrans('Tt', 'Uu')
-        if not(super().is_alphabet_correct()):
+        if not (super().is_alphabet_correct()):
             raise ValueError('The sequence does not correspond to DNA')
 
     def transcribe(self) -> RNASequence:
@@ -312,8 +323,9 @@ class AminoAcidSequence(BiologicalSequence):
     def __init__(self, seq):
         self.seq = seq
         self.aa_alphabet = 'ACDEFGHIKLMNPQRSTVWY'
-        if not(self.is_alphabet_correct()):
-            raise ValueError('The sequence does not match standard protein code')
+        if not (self.is_alphabet_correct()):
+            error = 'The sequence does not match standard protein code'
+            raise ValueError(error)
 
     def __len__(self):
         return len(self.seq)
@@ -329,7 +341,8 @@ class AminoAcidSequence(BiologicalSequence):
 
     def is_alphabet_correct(self) -> bool:
         """
-        The function checks if the sequence object contains standard amino acid code
+        The function checks if the sequence object contains
+        standard amino acid code
         Returns: list of alternative frames (AminoAcidSequence)
         """
         return set(self.seq.upper()) <= set(self.aa_alphabet)
@@ -340,14 +353,17 @@ class AminoAcidSequence(BiologicalSequence):
         Use only one-letter code
 
         Search is not sensitive for letter case
-        Without an alt_start_aa argument search for frames that start with methionine ('M')
-        To search frames with alternative start codon add alt_start_aa argument
+        Without an alt_start_aa argument search for
+        frames that start with methionine ('M')
+        To search frames with alternative start codon
+        add alt_start_aa argument
 
         The function ignores the last three amino acids in sequences
 
         Arguments:
         - self: sequence object to check
-        - alt_start_aa (str): the name of an amino acid that is encoded by alternative start AA (Optional)
+        - alt_start_aa (str): the name of an amino acid that
+        is encoded by alternative start AA (Optional)
         Default: alt_start_aa='I'
 
         Return: the list of alternative frames
