@@ -80,12 +80,12 @@ def filter_fastq(input_path: str,
     If 'fastq_filtrator_results' directory doesn't exist the program creates it in a current directory.
 
     Without full names use arguments in a certain order
-    Example: select_fastq(input_path, output_filename, (0,100), (0,200), 0)
-           # select_fastq(input_path, output_filename, gc_bounds=(0,100), length_bounds=(0,200), quality_threshold=0)
+    Example: filter_fastq(input_path, output_filename, (0,100), (0,200), 0)
+           # filter_fastq(input_path, output_filename, gc_bounds=(0,100), length_bounds=(0,200), quality_threshold=0)
              
              
     In case of changing only one argument, provide its full name!
-    Example: select_fastq(input_path, output_filename, length_bounds=(50, 100))
+    Example: filter_fastq(input_path, output_filename, length_bounds=(50, 100))
 
              
     Arguments:
@@ -117,13 +117,13 @@ def filter_fastq(input_path: str,
 
     There are three functions that are used in the main function:
     
-    - is_in_gc_bounds(seq, gc_bounds): 
+    - is_in_gc_bounds(seq_record, gc_bounds):
     Check if the sequence falls in the range of GC-content bounds
     
-    - is_in_length_bounds(seq, length_bounds): 
+    - is_in_length_bounds(seq_record, length_bounds):
     Check if the sequence falls in the range of length bounds
     
-    - is_above_quality_threshold(quality_scores, quality_threshold): 
+    - is_above_quality_threshold(seq_record, quality_threshold):
     Check if the mean of quality values exceeds the quality threshold
     
     Return:
