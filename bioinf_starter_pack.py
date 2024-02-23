@@ -1,9 +1,9 @@
 import os
-import numpy as np
-
-from Bio import SeqIO, SeqRecord, SeqUtils
-from typing import Optional
 from abc import ABC, abstractmethod
+from typing import Optional
+
+import numpy as np
+from Bio import SeqIO, SeqRecord, SeqUtils
 
 
 def is_in_gc_bounds(seq_record: SeqRecord, gc_bounds: tuple) -> bool:
