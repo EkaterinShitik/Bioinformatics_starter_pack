@@ -18,7 +18,7 @@ def is_in_gc_bounds(seq_record: SeqRecord, gc_bounds: tuple) -> bool:
     - bool: the result of the check
     """
     gc_min, gc_max = gc_bounds[0], gc_bounds[1]
-    gc_content = SeqUtils.gc_fraction(seq_record.seq)
+    gc_content = SeqUtils.GC123(seq_record.seq)[0]
     return gc_min <= gc_content <= gc_max
 
 
@@ -362,3 +362,5 @@ class AminoAcidSequence(BiologicalSequence):
                 alt_frame = AminoAcidSequence(alt_frame)
                 alternative_frames.append(alt_frame)
         return alternative_frames
+
+filter_fastq('example_fastq.fastq', 'result5', gc_bounds=(10,100))
