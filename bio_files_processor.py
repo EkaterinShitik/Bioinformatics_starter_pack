@@ -1,25 +1,26 @@
 import os
 
 
-def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta='result') -> None:
+def convert_multiline_fasta_to_oneline(input_fasta: str,
+                                       output_fasta='result') -> None:
     """
-    The function converts DNA/RNA/protein sequences from multiline format to one line
-
+    The function converts DNA/RNA/protein sequences from
+    multiline format to one line
     The function takes fasta file as input_fasta argument
-
-    The function output processed sequences in fasta file named as output_fasta argument
-
+    The function output processed sequences in fasta file
+    named as output_fasta argument
     It saves output file in a current directory
 
     Arguments:
 
     - input_fasta(str): the name of fasta file to be processed
-    
-    - output_fasta(str): the name for output file with obtained result (Optional)
+
+    - output_fasta(str): the name for output file
+    with obtained result (Optional)
     By default output_fasta = 'result'
     Argument output_fasta must be inputed without fasta extension
     Example: output_filename='processed_seqs'  # processed_seqs.fasta
-    
+
     Return:
     - file: file with fasta extension containing processed sequences
     """
@@ -34,29 +35,31 @@ def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta='result') 
                 seqs[name] += line
     file_output = []
     for name, seq in seqs.items():
-        (file_output.append(name) or 
+        (file_output.append(name) or
          file_output.append(seq))
     current_directory = os.getcwd()
     name_fasta = output_fasta + '.fasta'
     if os.path.exists(os.path.join(current_directory, name_fasta)):
-        raise ValueError('File with such name exists! Change output_fasta arg!')
+        error = 'File with such name exists! Change output_fasta arg!'
+        raise ValueError(error)
     with open(os.path.join(current_directory, name_fasta), mode='w') as file:
         for line in file_output:
             file.write(line + '\n')
 
 
-def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_after=1, output_fasta='result') -> None:
+def select_genes_from_gbk_to_fasta(input_gbk: str,
+                                   *genes: str,
+                                   n_before=1,
+                                   n_after=1,
+                                   output_fasta='result') -> None:
     """
-    The main aim of function is to select genes that flanking the genes of main interest(*genes argument)
-    
+    The main aim of function is to select genes that
+    flanking the genes of main interest(*genes argument)
     The function takes a file with gbk extention as input_gbk argument
-
-    The function output selected genes in fasta file named as output_fasta argument
-
+    The function output selected genes in fasta file
+    named as output_fasta argument
     It saves output file in a current directory
-
-    If selected genes are unknown they are named as unknownN 
-
+    If selected genes are unknown they are named as unknownN
     N is a number of this gene in gbk file
 
     Arguments:
@@ -74,15 +77,17 @@ def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_af
     By default n_after=1
     To find more flanking genes provide full name of argument
     Example: n_after=2
-    
-    - output_fasta(str): the name for output file with obtained result (Optional)
+
+    - output_fasta(str): the name for output file with
+    obtained result (Optional)
     By default output_fasta = 'result'
     Argument output_fasta must be inputed without fasta extension
     Use full name of argument
     Example: output_filename='processed_seqs'  # processed_seqs.fasta
-    
+
     Return:
-    - file: file with fasta extension containing names and protein sequences of genes flanking the genes of interest
+    - file: file with fasta extension containing names
+    and protein sequences of genes flanking the genes of interest
     """
     annot_genes = []
     genes_information = []
@@ -93,14 +98,14 @@ def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_af
             if line.startswith('CDS'):
                 genes_information = ''.join(genes_information)
                 genes_information = genes_information.split('"')
-                if not(any('gene' in _ for _ in genes_information)):
+                if not any('gene' in _ for _ in genes_information):
                     name_annot_gene = 'unknown' + str(num)
                     num += 1
                     sequence_annot_gene = genes_information[-2]
                 else:
                     name_annot_gene = genes_information[1]
                     sequence_annot_gene = genes_information[-2]
-                annot_genes.append([name_annot_gene, sequence_annot_gene])  # Choose only name and sequence
+                annot_genes.append([name_annot_gene, sequence_annot_gene])
                 genes_information = []
             else:
                 genes_information.append(line)
@@ -111,15 +116,17 @@ def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_af
             if name_gene_in_annot == gene:
                 posit_cur_gene = annot_genes.index(gene_in_annot)
                 for previous_posit in range(n_before, 0, -1):
-                    name_previous_gene = annot_genes[posit_cur_gene - previous_posit][0]
+                    delta_position = posit_cur_gene - previous_posit
+                    name_previous_gene = annot_genes[delta_position][0]
                     name_previous_for_fasta = '>gene ' + name_previous_gene
-                    seq_previous_gene = annot_genes[posit_cur_gene - previous_posit][1]
+                    seq_previous_gene = annot_genes[delta_position][1]
                     result.append(name_previous_for_fasta)
-                    result.append(seq_previous_gene)  
+                    result.append(seq_previous_gene)
                 for next_posit in range(1, n_after+1):
-                    name_next_gene = annot_genes[posit_cur_gene + next_posit][0]
+                    sum_position = posit_cur_gene + next_posit
+                    name_next_gene = annot_genes[sum_position][0]
                     name_next_for_fasta = '>gene ' + name_next_gene
-                    seq_next_gene = annot_genes[posit_cur_gene + next_posit][1]
+                    seq_next_gene = annot_genes[sum_position][1]
                     result.append(name_next_for_fasta)
                     result.append(seq_next_gene)
     if len(result) == 0:
@@ -127,7 +134,8 @@ def select_genes_from_gbk_to_fasta(input_gbk: str, *genes: str, n_before=1, n_af
     current_directory = os.getcwd()
     name_fasta = output_fasta + '.fasta'
     if os.path.exists(os.path.join(current_directory, name_fasta)):
-        raise ValueError('File with such name exists! Change output_fasta arg!')
+        error = 'File with such name exists! Change output_fasta arg!'
+        raise ValueError(error)
     with open(os.path.join(current_directory, name_fasta), mode='w') as file:
         for line in result:
-            file.write(line + '\n') 
+            file.write(line + '\n')
