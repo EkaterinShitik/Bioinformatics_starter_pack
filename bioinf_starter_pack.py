@@ -356,9 +356,9 @@ def filter_fastq(input_path: str,
     For more information please see README
 
     """
-    if type(length_bounds) is int:
+    if isinstance(length_bounds, int):
         length_bounds = 0, length_bounds
-    if type(gc_bounds) is int or type(gc_bounds) is float:
+    if isinstance(gc_bounds, int) or isinstance(gc_bounds, float):
         gc_bounds = 0, gc_bounds
     sequences = SeqIO.parse(input_path, "fastq")
     good_reads = []
@@ -368,7 +368,7 @@ def filter_fastq(input_path: str,
             is_above_quality_threshold(seq_record, quality_threshold)):
             good_reads += [seq_record]
     if len(good_reads) == 0:
-        raise ValueError('There are no sequences suited to requirements')
+        print(f'In {input_path} there are no sequences suited to requirements')
     if output_filename is None:
         input_filename = os.path.split(input_path)[-1]
         output_filename = input_filename
