@@ -1,4 +1,5 @@
 import os
+from dataclasses import dataclass
 
 
 def convert_multiline_fasta_to_oneline(input_fasta: str,
@@ -139,3 +140,82 @@ def select_genes_from_gbk_to_fasta(input_gbk: str,
     with open(os.path.join(current_directory, name_fasta), mode='w') as file:
         for line in result:
             file.write(line + '\n')
+
+
+@dataclass
+class FastaRecord:
+    """
+    The class to collect all information
+    about a fasta record
+    """
+    id: str
+    description: str
+    seq: str
+
+    def __repr__(self):
+        return f'{self.id} {self.description} \n{self.seq}'
+
+
+class OpenFasta:
+    """
+    The class is a context manager for fasta files
+    It processes all reads and returns them separately
+    function: read_record - returns each record step
+    by step
+    function: read_records - returns list of all records
+    """
+    def __init__(self, file_path: str, mode='r'):
+        self.file_path = file_path
+        self.mode = mode
+        self.file_handler = None
+        self.line = None
+
+    def __enter__(self):
+        self.file_handler = open(self.file_path, mode=self.mode)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        if self.file_handler:
+            self.file_handler.close()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> FastaRecord:
+        if self.line is None:
+            self.line = self.file_handler.readline()
+        if self.line == '':
+            raise StopIteration
+        line_sep = self.line.strip().split(' ')
+        seq_id = line_sep[0][1:]
+        description = ' '.join(line_sep[1:])
+        sequence = ''
+        self.line = self.file_handler.readline()
+        while not (self.line.startswith('>')):
+            sequence += self.line.strip()
+            self.line = self.file_handler.readline()
+            if self.line == '':
+                break
+        fasta_record = FastaRecord(seq_id, description, sequence)
+        return fasta_record
+
+    def read_record(self) -> FastaRecord:
+        """
+        The function returns fasta records step by step
+        :return: a fasta record
+        """
+        try:
+            return self.__next__()
+        except StopIteration:
+            return FastaRecord('', '', '')
+
+    def read_records(self) -> list:
+        """
+        The function collect all fasta records from
+        a fasta file
+        :return: list of fasta records
+        """
+        list_records = []
+        for record in self.__iter__():
+            list_records += [record]
+        return list_records
