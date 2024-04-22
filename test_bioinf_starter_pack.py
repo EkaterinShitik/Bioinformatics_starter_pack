@@ -32,12 +32,14 @@ class TestGroupBiolSequence:
         assert target == result
 
 
-class TestGroupOpenFasta:
+class InputFastaFile:
     @pytest.fixture
     def input_file_path(self):
         file_path = 'data/example_fasta.fasta'
         return file_path
 
+
+class TestGroupOpenFasta(InputFastaFile):
     def test_number_records(self, input_file_path):
         inp = input_file_path
         target_number = 5
@@ -52,6 +54,13 @@ class TestGroupOpenFasta:
             last_record = fasta_file.read_records()[-1]
             result_id = last_record.id
         assert target_id == result_id
+
+
+class TestGroupConvMultFasta(InputFastaFile):
+    def test_rewrite_files(self, input_file_path):
+        output_path = input_file_path.split('.fasta')[0]
+        with pytest.raises(ValueError):
+            convert_multiline_fasta_to_oneline(input_file_path, output_path)
 
 
 class TestGroupFilterFastq:
@@ -87,15 +96,3 @@ class TestGroupFilterFastq:
                     seq = file.readline().strip()
                     result_seqs.append(seq)
         assert target_seqs == result_seqs
-
-
-class TestGroupConvMultFasta:
-    @pytest.fixture
-    def input_file_path(self):
-        file_path = 'data/example_fasta.fasta'
-        return file_path
-
-    def test_rewrite_files(self, input_file_path):
-        output_file_path = input_file_path.split('.fasta')[0]
-        with pytest.raises(ValueError):
-            convert_multiline_fasta_to_oneline(input_file_path, output_file_path)
