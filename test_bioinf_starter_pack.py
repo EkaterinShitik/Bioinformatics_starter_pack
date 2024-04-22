@@ -66,12 +66,14 @@ class TestGroupFilterFastq:
     def tmp_file(self):
         file_name = 'tmp.fastq'
         yield file_name
-        file_path = f'fastq_filtrator_results/{file_name}'
+        obligatory_dir = 'fastq_filtrator_results'
+        file_path = os.path.join(obligatory_dir, file_name)
         if os.path.exists(file_path):
             os.remove(file_path)
-        if os.listdir('fastq_filtrator_results') == []:
-            os.rmdir('fastq_filtrator_results')
+        if not os.listdir(obligatory_dir):
+            os.rmdir(obligatory_dir)
 
     def test_output_file_exists(self, input_file_path, tmp_file):
         filter_fastq(input_file_path, tmp_file)
-        assert os.path.exists(f'fastq_filtrator_results/{tmp_file}')
+        target_file_path = os.path.join('fastq_filtrator_results', tmp_file)
+        assert os.path.exists(target_file_path)
