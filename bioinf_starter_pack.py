@@ -392,7 +392,9 @@ def telegram_logger(chat_id: int) -> Callable:
     The information includes:
     - The result of the function run (success or fail)
     - Time of running
-    - Stdout and stderr output in log life
+    - Stdout and stderr output in log file
+    - Stderr is written in a log file after
+    the empty line
     If the function does not have output, file
     is not attached.
 
