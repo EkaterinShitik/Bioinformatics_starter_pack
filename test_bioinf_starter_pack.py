@@ -3,9 +3,7 @@ import os
 import pytest
 
 from bio_files_processor import OpenFasta
-from bioinf_starter_pack import (AminoAcidSequence,
-                                 DNASequence,
-                                 RNASequence,
+from bioinf_starter_pack import (AminoAcidSequence, DNASequence, RNASequence,
                                  filter_fastq)
 
 
@@ -77,3 +75,15 @@ class TestGroupFilterFastq:
         filter_fastq(input_file_path, tmp_file)
         target_file_path = os.path.join('fastq_filtrator_results', tmp_file)
         assert os.path.exists(target_file_path)
+
+    def test_quality_threshold_output(self, input_file_path, tmp_file):
+        target_seqs = ['GACCTTTCCGCAAGCTGTCGC', 'CATGGTGGCG', 'C']
+        filter_fastq(input_file_path, tmp_file, quality_threshold=38)
+        file_path = os.path.join('fastq_filtrator_results', tmp_file)
+        result_seqs = []
+        with open(file_path, 'r') as file:
+            for line in file:
+                if line.startswith('@'):
+                    seq = file.readline().strip()
+                    result_seqs.append(seq)
+        assert target_seqs == result_seqs
