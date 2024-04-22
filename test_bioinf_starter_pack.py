@@ -19,3 +19,10 @@ class TestGroupBiolSequence:
         inp = input_data
         with pytest.raises(ValueError):
             RNASequence(inp)
+
+    def test_prot_search4alt_frames(self):
+        inp = 'MYRHHWWMYYYYYYYM'
+        target = 'MYYYYYYYM'
+        sample = AminoAcidSequence(inp)
+        result = sample.search_for_alt_frames()[0].seq
+        assert target == result
