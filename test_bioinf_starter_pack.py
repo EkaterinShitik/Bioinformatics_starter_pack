@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from bio_files_processor import OpenFasta
+from bio_files_processor import OpenFasta, convert_multiline_fasta_to_oneline
 from bioinf_starter_pack import (AminoAcidSequence, DNASequence, RNASequence,
                                  filter_fastq)
 
@@ -87,3 +87,15 @@ class TestGroupFilterFastq:
                     seq = file.readline().strip()
                     result_seqs.append(seq)
         assert target_seqs == result_seqs
+
+
+class TestGroupConvMultFasta:
+    @pytest.fixture
+    def input_file_path(self):
+        file_path = 'data/example_fasta.fasta'
+        return file_path
+
+    def test_rewrite_files(self, input_file_path):
+        output_file_path = input_file_path.split('.fasta')[0]
+        with pytest.raises(ValueError):
+            convert_multiline_fasta_to_oneline(input_file_path, output_file_path)
