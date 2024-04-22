@@ -6,8 +6,8 @@ from bioinf_starter_pack import DNASequence, AminoAcidSequence, RNASequence
 class TestGroupBiolSequence:
     @pytest.fixture
     def input_data(self):
-        inp = 'ATGC'
-        return inp
+        dna_seq = 'ATGC'
+        return dna_seq
 
     def test_transcribed_dna_type(self, input_data):
         inp = input_data
@@ -15,7 +15,7 @@ class TestGroupBiolSequence:
         result = DNASequence(inp).transcribe()
         assert isinstance(result, target_type)
 
-    def test_protein_content(self):
-        inp = 'BGARB'
+    def test_rna_content(self, input_data):
+        inp = input_data
         with pytest.raises(ValueError):
-            AminoAcidSequence(inp)
+            RNASequence(inp)
