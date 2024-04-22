@@ -64,10 +64,13 @@ class TestGroupFilterFastq:
 
     @pytest.fixture
     def tmp_file(self):
-        file_path = 'tmp.fastq'
-        yield file_path
+        file_name = 'tmp.fastq'
+        yield file_name
+        file_path = f'fastq_filtrator_results/{file_name}'
         if os.path.exists(file_path):
-            os.remove(f'fastq_filtrator_results/{file_path}')
+            os.remove(file_path)
+        if os.listdir('fastq_filtrator_results') == []:
+            os.rmdir('fastq_filtrator_results')
 
     def test_output_file_exists(self, input_file_path, tmp_file):
         filter_fastq(input_file_path, tmp_file)
