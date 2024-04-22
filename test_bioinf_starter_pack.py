@@ -5,7 +5,7 @@ from bioinf_starter_pack import DNASequence, AminoAcidSequence, RNASequence
 
 class TestGroupBiolSequence:
     @pytest.fixture
-    def input_data():
+    def input_data(self):
         inp = 'ATGC'
         return inp
 
