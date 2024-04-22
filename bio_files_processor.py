@@ -131,7 +131,7 @@ def select_genes_from_gbk_to_fasta(input_gbk: str,
                     result.append(name_next_for_fasta)
                     result.append(seq_next_gene)
     if len(result) == 0:
-        return 'There are no provided genes in gbk file'
+        print('There are no provided genes in gbk file')
     current_directory = os.getcwd()
     name_fasta = output_fasta + '.fasta'
     if os.path.exists(os.path.join(current_directory, name_fasta)):
