@@ -411,7 +411,7 @@ def telegram_logger(chat_id: int) -> Callable:
             sys.stderr = io.StringIO()
             try:
                 start_time = datetime.datetime.now()
-                func(*args, **kwargs)
+                func_result = func(*args, **kwargs)
                 end_time = datetime.datetime.now()
                 run_time = end_time - start_time
             except Exception as e:
@@ -447,7 +447,7 @@ def telegram_logger(chat_id: int) -> Callable:
                               files=file)
             sys.stdout = original_stdout
             sys.stderr = original_stderr
-            return func(*args, **kwargs)
+            return func_result
         return wrapper
     return decorator
 
