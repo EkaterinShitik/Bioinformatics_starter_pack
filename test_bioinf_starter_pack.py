@@ -1,7 +1,12 @@
+import os
+
 import pytest
 
-from bioinf_starter_pack import DNASequence, AminoAcidSequence, RNASequence
 from bio_files_processor import OpenFasta
+from bioinf_starter_pack import (AminoAcidSequence,
+                                 DNASequence,
+                                 RNASequence,
+                                 filter_fastq)
 
 
 class TestGroupBiolSequence:
@@ -49,3 +54,21 @@ class TestGroupOpenFasta:
             last_record = fasta_file.read_records()[-1]
             result_id = last_record.id
         assert target_id == result_id
+
+
+class TestGroupFilterFastq:
+    @pytest.fixture
+    def input_file_path(self):
+        file_path = 'data/example_fastq.fastq'
+        return file_path
+
+    @pytest.fixture
+    def tmp_file(self):
+        file_path = 'tmp.fastq'
+        yield file_path
+        if os.path.exists(file_path):
+            os.remove(f'fastq_filtrator_results/{file_path}')
+
+    def test_output_file_exists(self, input_file_path, tmp_file):
+        filter_fastq(input_file_path, tmp_file)
+        assert os.path.exists(f'fastq_filtrator_results/{tmp_file}')
