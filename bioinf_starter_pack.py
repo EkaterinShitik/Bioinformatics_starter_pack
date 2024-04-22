@@ -569,7 +569,7 @@ def run_genscan(sequence=None,
         exons[exon_number] = [exon_start, exon_end]
         if intron_number in introns.keys():
             intron_end = exon_start - 1
-            introns[intron_number] += [intron_end]
+            introns[intron_number].append(intron_end)
         intron_number = float(values[1])
         intron_start = exon_end + 1
         introns[intron_number] = [intron_start]
