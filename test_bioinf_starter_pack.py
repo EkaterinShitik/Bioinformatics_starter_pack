@@ -1,14 +1,19 @@
 import pytest
 
-from bioinf_starter_pack import DNASequence, AminoAcidSequence
+from bioinf_starter_pack import DNASequence, AminoAcidSequence, RNASequence
+
 
 class TestGroupBiolSequence:
-    def test_dna_type(self):
+    @pytest.fixture
+    def input_data():
         inp = 'ATGC'
-        target_type = DNASequence
-        result = DNASequence(inp).complement()
-        assert isinstance(result, target_type)
+        return inp
 
+    def test_transcribed_dna_type(self, input_data):
+        inp = input_data
+        target_type = RNASequence
+        result = DNASequence(inp).transcribe()
+        assert isinstance(result, target_type)
 
     def test_protein_content(self):
         inp = 'BGARB'
