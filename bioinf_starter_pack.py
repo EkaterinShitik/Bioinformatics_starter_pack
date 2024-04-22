@@ -405,7 +405,10 @@ def telegram_logger(chat_id: int) -> Callable:
     """
     def decorator(func):
         def wrapper(*args, **kwargs):
-            sys.stdout = sys.stderr = io.StringIO()
+            original_stdout = sys.stdout
+            original_stderr = sys.stderr
+            sys.stdout = io.StringIO()
+            sys.stderr = io.StringIO()
             try:
                 start_time = datetime.datetime.now()
                 func(*args, **kwargs)
@@ -424,7 +427,8 @@ def telegram_logger(chat_id: int) -> Callable:
             load_dotenv()
             token = os.getenv("TG_API_TOKEN")
             url = 'https://api.telegram.org/bot{0}/{1}'
-            if sys.stdout.getvalue() == '':
+            output = sys.stdout.getvalue() + '\n' + sys.stderr.getvalue()
+            if output == '' + '\n' + '':
                 method = 'sendMessage'
                 data = {'chat_id': chat_id,
                         'text': message,
@@ -433,7 +437,6 @@ def telegram_logger(chat_id: int) -> Callable:
                               data=data)
             else:
                 name_log_file = f'{func.__name__}.log'
-                output = sys.stdout.getvalue()
                 method = 'sendDocument'
                 file = {'document': (name_log_file, output)}
                 data = {'chat_id': chat_id,
@@ -442,6 +445,8 @@ def telegram_logger(chat_id: int) -> Callable:
                 requests.post(url=url.format(token, method),
                               data=data,
                               files=file)
+            sys.stdout = original_stdout
+            sys.stderr = original_stderr
             return func(*args, **kwargs)
         return wrapper
     return decorator
