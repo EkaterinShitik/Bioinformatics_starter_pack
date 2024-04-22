@@ -1,6 +1,6 @@
 import pytest
 
-from bioinf_starter_pack import DNASequence
+from bioinf_starter_pack import DNASequence, AminoAcidSequence
 
 
 def test_dna_type():
@@ -8,3 +8,9 @@ def test_dna_type():
     target_type = DNASequence
     result = DNASequence(inp).complement()
     assert isinstance(result, target_type)
+
+
+def test_protein_content():
+    inp = 'BGARB'
+    with pytest.raises(ValueError):
+        AminoAcidSequence(inp)
