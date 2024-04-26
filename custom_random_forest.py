@@ -1,4 +1,4 @@
-from multiprocessing import Pool
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 
 import numpy as np
 from sklearn.base import BaseEstimator
@@ -40,24 +40,30 @@ class RandomForestClassifierCustom(BaseEstimator):
         list_X = [X] * self.n_estimators
         list_y = [y] * self.n_estimators
         arguments = zip(list_X, list_y, range(self.n_estimators))
-        with Pool(n_jobs) as pool:
+        with ProcessPoolExecutor(n_jobs) as pool:
             results = pool.map(self.fit_tree, arguments)
         for element in results:
             self.trees.append(element[0])
             self.feat_ids_by_tree.append(element[1])
         return self
 
-    def predict_proba(self, X, n_jobs):
-        predict_proba_list = []
-        number_tree = 0
-        for tree in self.trees:
-            prediction = tree.predict_proba(X[:, self.feat_ids_by_tree[number_tree]])
-            predict_proba_list += [prediction]
-            number_tree += 1
+    def predict_proba_tree(self, args):
+        X, tree, features = args
+        prediction = tree.predict_proba(X[:, features])
+        return prediction
+
+    def predict_proba(self, X, n_jobs, process):
+        list_X = [X] * self.n_estimators
+        arguments = zip(list_X, self.trees, self.feat_ids_by_tree)
+        if process:
+            parallel_func = ProcessPoolExecutor
+        else:
+            parallel_func = ThreadPoolExecutor
+        with parallel_func(n_jobs) as pool:
+            predict_proba_list = list(pool.map(self.predict_proba_tree, arguments))
         return np.array(predict_proba_list).mean(axis=0)
 
-    def predict(self, X, n_jobs):
-        probas = self.predict_proba(X, n_jobs)
+    def predict(self, X, n_jobs, process=True):
+        probas = self.predict_proba(X, n_jobs, process)
         predictions = np.argmax(probas, axis=1)
-
         return predictions
