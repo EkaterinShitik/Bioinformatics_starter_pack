@@ -24,7 +24,7 @@ class RandomForestClassifierCustom(BaseEstimator):
         rand_features = np.random.choice(X.shape[1],
                                          self.max_features,
                                          replace=False)
-        self.feat_ids_by_tree += [rand_features]
+        #self.feat_ids_by_tree += [rand_features]
         rand_samples = np.random.choice(X.shape[0],
                                         X.shape[0],
                                         replace=True)
@@ -34,7 +34,7 @@ class RandomForestClassifierCustom(BaseEstimator):
                                      max_features=self.max_features,
                                      random_state=self.random_state)
         clf.fit(X_sample, y_sample)
-        return clf
+        return clf, rand_features
 
     def fit(self, X, y, n_jobs):
         self.classes_ = sorted(np.unique(y))
@@ -43,21 +43,23 @@ class RandomForestClassifierCustom(BaseEstimator):
             arg_tuple = (X, y, i)
             arguments.append(arg_tuple)
         with Pool(n_jobs) as pool:
-            self.trees = pool.map(self.fit_tree, arguments)
+            results = pool.map(self.fit_tree, arguments)
+        for element in results:
+            self.trees.append(element[0])
+            self.feat_ids_by_tree.append(element[1])
         return self
 
-    def predict_proba(self, X, n_jobs=1):
+    def predict_proba(self, X, n_jobs):
         predict_proba_list = []
         number_tree = 0
         for tree in self.trees:
-            number_tree_feature = self.feat_ids_by_tree[number_tree]
-            prediction = tree.predict_proba(X[:, number_tree_feature])
+            prediction = tree.predict_proba(X[:, self.feat_ids_by_tree[number_tree]])
             predict_proba_list += [prediction]
             number_tree += 1
         return np.array(predict_proba_list).mean(axis=0)
 
-    def predict(self, X, n_jobs=1):
+    def predict(self, X, n_jobs):
         probas = self.predict_proba(X)
-        print(probas)
         predictions = np.argmax(probas, axis=1)
+
         return predictions
