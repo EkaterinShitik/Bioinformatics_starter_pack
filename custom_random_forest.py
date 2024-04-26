@@ -24,7 +24,6 @@ class RandomForestClassifierCustom(BaseEstimator):
         rand_features = np.random.choice(X.shape[1],
                                          self.max_features,
                                          replace=False)
-        #self.feat_ids_by_tree += [rand_features]
         rand_samples = np.random.choice(X.shape[0],
                                         X.shape[0],
                                         replace=True)
@@ -38,10 +37,9 @@ class RandomForestClassifierCustom(BaseEstimator):
 
     def fit(self, X, y, n_jobs):
         self.classes_ = sorted(np.unique(y))
-        arguments = []
-        for i in range(self.n_estimators):
-            arg_tuple = (X, y, i)
-            arguments.append(arg_tuple)
+        list_X = [X] * self.n_estimators
+        list_y = [y] * self.n_estimators
+        arguments = zip(list_X, list_y, range(self.n_estimators))
         with Pool(n_jobs) as pool:
             results = pool.map(self.fit_tree, arguments)
         for element in results:
@@ -59,7 +57,7 @@ class RandomForestClassifierCustom(BaseEstimator):
         return np.array(predict_proba_list).mean(axis=0)
 
     def predict(self, X, n_jobs):
-        probas = self.predict_proba(X)
+        probas = self.predict_proba(X, n_jobs)
         predictions = np.argmax(probas, axis=1)
 
         return predictions
