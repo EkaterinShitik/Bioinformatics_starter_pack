@@ -52,7 +52,7 @@ class RandomForestClassifierCustom(BaseEstimator):
         prediction = tree.predict_proba(X[:, features])
         return prediction
 
-    def predict_proba(self, X, n_jobs, process):
+    def predict_proba(self, X, n_jobs, process=True):
         list_X = [X] * self.n_estimators
         arguments = zip(list_X, self.trees, self.feat_ids_by_tree)
         if process:
@@ -60,8 +60,8 @@ class RandomForestClassifierCustom(BaseEstimator):
         else:
             parallel_func = ThreadPoolExecutor
         with parallel_func(n_jobs) as pool:
-            predict_proba_list = list(pool.map(self.predict_proba_tree, arguments))
-        return np.array(predict_proba_list).mean(axis=0)
+            predict_proba_list = pool.map(self.predict_proba_tree, arguments)
+        return np.array(list(predict_proba_list)).mean(axis=0)
 
     def predict(self, X, n_jobs, process=True):
         probas = self.predict_proba(X, n_jobs, process)
