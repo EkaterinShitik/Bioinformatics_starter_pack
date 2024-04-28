@@ -19,8 +19,8 @@ class RandomForestClassifierCustom(BaseEstimator):
         self.classes_ = None
 
     def fit_tree(self, args):
-        X, y, i = args
-        np.random.seed(seed=self.random_state + i)
+        X, y, n_estim = args
+        np.random.seed(seed=self.random_state + n_estim)
         rand_features = np.random.choice(X.shape[1],
                                          self.max_features,
                                          replace=False)
