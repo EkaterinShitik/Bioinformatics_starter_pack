@@ -33,10 +33,14 @@ The program `bio_files_processor.py` facilitates parsing FASTA and GenBank files
 
   To open FASTA file and return separate FASTA records including id, description and sequence. The implementation of the context manager is similar to `open` built-in function.
 ## `custom_random_forest.py`
-The program `custom_random_forest.py` contains custom implementation of Random forest classifier as `RandomForestClassifierCustom` class *. 
+The program `custom_random_forest.py` contains custom implementation of Random forest classifier as 
+- `RandomForestClassifierCustom` class *
 
 In terms of this course this class was refined using parallel programming. Using `n_jobs` argument enables speeding up the running 
 ## `test_bioinf_starter_pack.py`
 The program `test_bioinf_starter_pack.py` includes classes to test the programs mentioned above.
+##
 
-Enjoy your use! ✨✨
+I would like to express huge gratitude to the course team. All participants can be found at the end of this [page](https://bioinf.me/education/program) 
+
+They are the best teachers ever✨✨
