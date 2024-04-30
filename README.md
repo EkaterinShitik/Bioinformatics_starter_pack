@@ -1,434 +1,46 @@
 # Bioinformatics_starter_pack
-Bioinformatic_starter_pack contains two type of tools that could be useful for bioinformaticians.
+Bioinformatic_starter_pack contains programs that were written while doing home tasks in Python course in [Bioinformatics Institute](https://bioinf.me/en).
+<br/><br/> 
+![Image alt](https://github.com/EkaterinShitik/the-second-repository/raw/main/image_python_rep.png)
+<br/><br/> 
+The examples of running some programs that are highlighted with * are presented in `Showcases.ipynb`
 
-**Program `bioinf_starter_pack.py`**
-
-The program `bioinf_starter_pack.py` provides basic tools to work with three main types of bioinformatic data:
-- `dna_rna_tools.py` to process *nucleotide* *sequences*
-- `protein_tools.py` to process *amino* *acid* *sequences*
-- `fastq_tools.py` to filtrate the obtained sequences in *FASTQ format*
-
-
-![Image alt](https://github.com/EkaterinShitik/the-second-repository/raw/main/Презентация-без-названия.jpg)
-
-**Program `bio_files_processor.py`**
-
-The program `bio_files_processor.py.` provides basic functions to work with fasta and gbk files:
-- `convert_multiline_fasta_to_oneline` function converts DNA/RNA/protein sequences from multiline format to one line
-- `select_genes_from_gbk_to_fasta` function to select genes that flanking the genes of main interest
-
-## Program `bioinf_starter_pack.py`
-### Program `dna_rna_tools.py` 
-
-#### A tool to work with nucleotide sequences
-
-Program `dna_rna_tools.py` automaticaly convert DNA or RNA sequences and calculate their *GC*-content. The conversion is performed according to [complementarity rule](https://en.wikipedia.org/wiki/Complementarity_(molecular_biology)). The calculation of *GC*-content is performed according to the [formula](https://en.wikipedia.org/wiki/GC-content#Determination).
-
-#### Usage
-
-The programm is based on `run_dna_rna_tools` function that takes an arbitrary number of DNA or RNA sequences and a name of the function to be performed. The name of function must be inputed last. Use only one function at a time. Use only sequences that contain standard types of nucleotides: 
-
-DNA - *A*, *G*, *C*, *T*
-
-RNA - *A*, *G*, *C*, *U*
-
-To start with the program run the following command:
-
-`run_dna_rna_tools(sequences, func='function')`
-
-Where:
-- sequences - an arbitrary number of DNA or RNA sequences that must to be inputed in *string* type
-- func - keyword argument, a type of functions to use that is inputed in *string* type
+## `bioinf_starter_pack.py`
+The program `bioinf_starter_pack.py` provides basic tools to work with different types of bioinformatic data.
+- `RNASequence`/`DNASequence`/`AminoAcidSequence` classes *
   
-Before start, check the *Options* and *Examples*.
+  To manipulate with three main bioinformatic data types - *DNA*, *RNA* and *proteins*. The implementation of these classes embraced four basic principles of OOP - encapsulation, inheritance, polymorphism, and abstraction.
+- `filter_fastq` function
 
-
-#### Options
-The program has five types of functions, for more information please see provided docstrings:
-
-- `transcribe` — print transcribed sequence*
-- `reverse` — print reversed sequence
-- `complement` — print complementary sequence
-- `reverse_complement` — print reversed complementary sequence
-- `gc_count` — count *GC*-content in percentage
+  To filter fastq files under the GC-content, the length of sequences and the quality scores
+- `run_genscan` function *
   
-\* Reverse transcription is also taken into account (from RNA to DNA)
-    
-#### Examples
-
-```python
-run_dna_rna_tools('ATG', func='transcribe') # 'AUG'
-run_dna_rna_tools('ATG', func='reverse') # 'GTA'
-run_dna_rna_tools('AtG', func='complement') # 'TaC'
-run_dna_rna_tools('ATg', func='reverse_complement') # 'cAT'
-run_dna_rna_tools('ATG', 'aT', func='reverse') # ['GTA', 'Ta']
-run_dna_rna_tools('ATGgGCCtAA', func='gc_count') # '50.0%'
-run_dna_rna_tools('ATTg', 'AuUgG', func='gc_count') # ['25.0%', '40.0%']
-```
-
-#### Troubleshooting
-
-|  Type of the problem                                             |  Probable cause
-| ------------------------------------------------------------ |--------------------
-| Output does not correspond the expected resultes             | The name of function is wrong. You see the results of another procedure
-| run_dna_rna_tools() missing 1 required keyword-only argument: 'func'                          | The 'func' argument is not added
-| ValueError: Invalid operation!                              | There is a mistake in the name of function
-| ValueError: Sequence of number *n* is incorrect! | Sequence of this number *n* does not correspond to structure of DNA or RNA
-
-
-
-### Program `protein_tools.py` 
-#### A tool to work with protein sequences
-
-*Proteins* are under the constant focus of scientists. Currently, there are an enormous amount of tools to operate with nucleotide sequences, however, the same ones for proteins are extremely rare. 
-
-`protein_tools.py` is an open-source program that facilitates working with protein sequences. 
-
-#### Usage
-The programm is based on `run_protein_tools` function that takes an arbitrary number of **one-letter amino acid sequences**,  a name of procedure and a relevant argument. If you have three-letter amino acids sequences you could convert them by using `three_one_letter_code` procedure in advance. Three-lettter names of amino acids **must be separated with hyphen**.
-
-To start with the program run the following command:
-
-`run_protein_tools(sequences, procedure="procedure", ...)`
-
-Where:
-- sequences - an arbitrary number of amino acid sequences
-- procedure - keyword argument, a type of procedure to use that is inputed in *string* type
-- ... - an additional keyword arguments that are to be inputed in *string* type
-- 
-Before start, check the *Options* and *Examples*.
-#### Options
-
-The program has five types of procedures, for more information please see provided docstrings:
-
- `three_one_letter_code`
- 
-- The main aim - to convert three-letter amino acid sequences to one-letter ones and vice-versa
-- In case of three-to-one translation the names of amino acids **must be separated with hyphen**
-- An additional argument: no
-
- `define_molecular_weight` 
- 
-- The main aim - to determine the exact molecular weight of protein sequences
-- An additional argument: no
-
- `search_for_motifs` 
-
-- The main aim - to search for the motif of interest in protein sequences
-- An additional arguments: motif (*str*), overlapping (*bool*)
-
- `search_for_alt_frames` 
-
-- The main aim - to look for alternative frames that start with methyonine or other non-canonical start amino acids
-- Ignores the last three amino acids due to the insignicance of alternative frames of this length
-- An additional argument: alt_start_aa (*str*)
-- Use alt_start_aa **only for non-canonical start amino acids**
-- Without alt_start_aa the procedure find alternative frames that start with methyonine
-
-`convert_to_nucl_acids` 
- 
-- The main aim - to convert protein sequences to DNA, RNA or both nucleic acid sequences
-- The program use the most frequent codons in human that could be found [here](https://www.genscript.com/tools/codon-frequency-table)
-- An additional argument: nucl_acids (*str*)
-- Use as nucl_acids only DNA, RNA or both (for more detailes, check *Examples*)
-
-
-#### Examples
-```python
-# three_one_letter_code
-run_protein_tools('met-Asn-Tyr', 'Ile-Ala-Ala', procedure='three_one_letter_code')  # ['mNY', 'IAA']
-run_protein_tools('mNY','IAA', procedure='three_one_letter_code')  # ['met-Asn-Tyr', 'Ile-Ala-Ala']
-
-
-# define_molecular_weight
-run_protein_tools('MNY','IAA', procedure='define_molecular_weight')  # {'MNY': 426.52, 'IAA': 273.35}
-
-
-# check_for_motifs
-run_protein_tools('mNY','IAA', procedure='search_for_motifs', motif='NY')
-#Sequence: mNY
-#Motif: NY
-#Motif is present in protein sequence starting at positions: 1
-
-#Sequence: IAA
-#Motif: NY
-#Motif is not present in protein sequence
-
-{'mNY': [1], 'IAA': []}
-
-
-# search_for_alt_frames
-run_protein_tools('mNYQTMSPYYDMId', procedure='search_for_alt_frames')  # {'mNYQTMSPYYDMId': ['MSPYYDMId']}
-run_protein_tools('mNYTQTSP', procedure='search_for_alt_frames', alt_start_aa='T')  # {'mNYTQTSP': ['TQTSP']}
-
-
-# convert_to_nucl_acids
-run_protein_tools('MNY', procedure='convert_to_nucl_acids', nucl_acids = 'RNA')  # {'RNA': ['AUGAACUAU'], 'DNA': []}
-run_protein_tools('MNY', procedure='convert_to_nucl_acids', nucl_acids = 'DNA')  # {'RNA': [], 'DNA': ['ATGAACTAT']}
-run_protein_tools('MNY', procedure='convert_to_nucl_acids', nucl_acids = 'both') # {'RNA': ['AUGAACUAU'], 'DNA': ['ATGAACTAT']}
-
-```
-
-#### Troubleshooting
-
-|  Type of the problem                                             |  Probable cause
-| ------------------------------------------------------------ |--------------------
-| Output does not correspond the expected resultes             | The name of procedure is wrong. You see the results of another procedure
-| ValueError: No sequences provided                            | A list of sequences are not inputed
-| ValueError: Wrong procedure                                  | The procedure does not exist in this program
-| ValueError: Use three-letter aa only for "three_one_letter_code" procedure!  | Three-letter sequences were inputed. This type of sequences is accepted only by "three_one_letter_code" procedure
-| ValueError: Invalid sequence given                           | The sequences do not correspond to standard amino acid code
-| ValueError: Please provide desired motif                     | There are no an additional argument *motif* in `search_for_motifs`
-| ValueError: Invalid alternative start AA                                 | There is more than one letter in an additional argument *alt_start_aa* in `search_for_alt_frames`
-| ValueError: Please provide desired type of nucl_acids        | There are no an additional argument *nucl_acids* in `convert_to_nucl_acids`
-| ValueError: Invalid nucl_acids argument                      | An additional argument in `convert_to_nucl_acids` is written incorrectly
-
-### Program `fastq_tools.py` 
-
-#### A tool to work with nucleotide fragments in FASTQ format
-
-Program `fastq_tools.py` selects nucleotide fragments in FASTQ format according to three requirements that could be determined by User:
-- *GC*-content. The calculation of *GC*-content is performed according to the [formula](https://en.wikipedia.org/wiki/GC-content#Determination).
-- *The* *length* of fragment sequences
-- *The* *quality* *score* of sequencing. The program uses phred+33 score and converts the quality values according to this [rule](https://support.illumina.com/help/BaseSpace_OLH_009008/Content/Source/Informatics/BS/QualityScoreEncoding_swBS.htm)
-
-#### Usage
-
-The program is based on `select_fastq` function that takes the path to a FATQ file, the name of a FATQ file with obtained results, the range of maximal and minimal bounds of GC-content, the range of maximal and minimal bounds of the length of fragments and the quality threshold. All of the keyword arguments have their default meaning(see below).
-The program output obtained fastq file in the 'fastq_filtrator_results' directory. If 'fastq_filtrator_results' directory doesn't exist the program creates it in a current directory.
-In case there are no sequences that suite requirements the program output: 'There are no sequences suited to requirements'.
-
-To start with the program run the following command:
-
-`select_fastq(input_path, output_filename, gc_bounds=..., length_bounds=..., quality_threshold=...)`
-
-Where:
-- input_path - the path to the FASTQ file. Must be in a string type
+  To make requests on [Genscan website](http://hollywood.mit.edu/GENSCAN.html) to predict possible CDS, exons and introns in the sequence of interest. The output is also implemented as a class.
   
-  Example: '/User/main_dir/example.fastq'
+- `telegram_logger` decorator
   
-- output_filename - the name for output file with obtained result. Must be in a string type.
-
-  This argument is optional. By default output_filename = None
+  To send the user information on the function of the main interest. The information includes the result of run, time of running, stdout and stderr output in log file. This function is implemented based on [Telegram API](https://core.telegram.org/) without specific libraries.
+      
+## `bio_files_processor.py`
+The program `bio_files_processor.py` facilitates parsing FASTA and GenBank files.
+- `convert_multiline_fasta_to_oneline` function
   
-  Without output_filename argument the output file is named as input file
+  To convert any number of *DNA*/*RNA*/*protein* sequences in FASTA file from multiline format to one line.
+- `select_genes_from_gbk_to_fasta` function
   
-  Name without fastq extention is acceptible
+  To select nearest neighbors of the gene of main interest from GenBank file and output them in FASTA format.
+- `OpenFasta` context manager *
 
-  Example: `output_filename='result'  # 'result.fastq'`
+  To open FASTA file and return separate FASTA records including id, description and sequence. The implementation of the context manager is similar to `open` built-in function.
+## `custom_random_forest.py`
+The program `custom_random_forest.py` contains custom implementation of Random forest classifier as 
+- `RandomForestClassifierCustom` class *
 
-  
-- gc_bounds - keyword argument that determines maximal and minimal bounds of GC-content
-  
-  By default `gc_bounds=(0,100)`
-  
-  This argument could be inputed in *tuple*, *int* or *float* types. In case of using one number the function accepts it as 
-  a maximum bound
-  
-  Example: `gc_bounds=40  # (0,40)`
-  
-- length_bounds - keyword argument that determines maximal and minimal bounds of the length of fragments
-  
-  By default `length_bounds=(0,4294967296)`
-  
-  This argument could be inputed in *tuple*, *int* or *float* types. In case of using one number the function accepts it as 
-  a maximum bound
-  
-  Example: `length_bounds=90.8  # (0,90.8)`
+In terms of this course this class was refined using parallel programming. Using `n_jobs` argument enables speeding up the running 
+## `test_bioinf_starter_pack.py`
+The program `test_bioinf_starter_pack.py` includes classes to test the programs mentioned above.
+##
 
-- quality_threshold(int or float): the quality threshold of the main interest. It could be inputed in *int* and *float* types
-  
-  By default `quality_threshold=0`
-  
-  Example: `quality_threshold=10`
+I would like to express huge gratitude to the course team. All participants can be found at the end of this [page](https://bioinf.me/education/program) 
 
-Without full names use arguments in a certain order
-
-Example: 
-
-`select_fastq(seqs, (0,100), (0,200), 0)`  # *the* *same* *as* 
-
-`select_fastq(seqs, gc_bounds=(0,100), length_bounds=(0,200), quality_threshold=0)`
-             
-             
-In case of using only one argument, provide its full name!
-
-Example: `select_fastq(seqs, length_bounds=(50, 100))`
-  
-Before start, check the *Options* and *Examples*.
-
-
-#### Options
-
-There are three functions that are used in the program:
-    
-- is_in_gc_bounds(seq, gc_bounds) - takes a sequence in *string* type and check if the sequence falls in the range of GC-content bounds
-- is_in_length_bounds(seq, length_bounds) - takes a sequence in *string* type and check if the sequence falls in the range of length bounds
-- is_above_quality_threshold(quality_scores, quality_threshold) - takes a quality values in *string* type and check if the mean of quality values exceeds the quality threshold
-
-#### Examples
-
-```python
-# Input
-# '@SRX079804:1:SRR292678:1:1101:21885:21885'
-# 'ACAGCAA'
-# '+'
-# 'FGGGFGG'
-# '@SRX079804:1:SRR292678:1:1101:24563:24563'
-# 'ATTAGCGAGGAGGAGT'
-# '+'
-# 'BFFFFFFFB@B@A<@D'
-
-
-select_fastq(example, gc_bounds=(40,60))
-
-# Output:
-# '@SRX079804:1:SRR292678:1:1101:24563:24563'
-# 'ATTAGCGAGGAGGAGT'
-# '+'
-# 'BFFFFFFFB@B@A<@D'
-
-```
-
-
-#### Troubleshooting
-
-|  Type of the problem                                             |  Probable cause
-| ------------------------------------------------------------ |--------------------
-| Output does not correspond the expected resultes             | The arguments are inputed without full names in the incorrect order
-| TypeError: select_fastq() got an unexpected keyword argument 'n'   | The name of argument 'n' is written incorrectly
-| TypeError: '>=' not supported between instances of 'float' and 'str'| The arguments are inputed in incorrect type
-| ValueError: File with such name exists! Change output_filename arg! | File with such name exists in 'fastq_filtrator_results' directory
-
-
-## Program `bio_files_processor.py`
-### Function `convert_multiline_fasta_to_oneline`
-The function `convert_multiline_fasta_to_oneline` converts any number of DNA/RNA/protein sequences in FASTA file from multiline format to one line. 
-
-#### Usage
-
-The function takes fasta file and output obtained results also in fasta format in a current directory. Besides function takes the name for the output FASTA-file.
-
-To start with the program run the following command:
-
-`convert_multiline_fasta_to_oneline(input_fasta, output_fasta)`
-
-Where:
-- input_fasta - the name of fasta file to be processed. Must be in a string type
-  
-  Example: 'example.fasta'
-  
-- output_filename - the name for output file with obtained result. Must be in a string type.
-
-  This argument is optional. By default output_filename = 'result'
-  
-  Output_filename argument must be provided without fasta extension.
-
-  Example: output_filename='result'  # 'result.fasta'
-    
-#### Examples
-
-```python
-# Input
-# >Genome
-# ATCG
-# GGCT
-
-convert_multiline_fasta_to_oneline(input_fasta, output_fasta)
-
-# Ouput
-# >Genome
-# ATCGGGCT
-```
-
-#### Troubleshooting
-
-|  Type of the problem                                             |  Probable cause
-| ------------------------------------------------------------ |--------------------
-| ValueError: File with such name exists! Change output_fasta arg! | File with such name exists in current directory
-
-
-### Function `select_genes_from_gbk_to_fasta`
-The function `select_genes_from_gbk_to_fasta` provides the information about the nearest neighbors of the gene of main interest. The information includes the name of a flanking gene and its protein sequence. 
-
-#### Usage
-
-The function takes gbk file and output obtained results in fasta format in a current directory. Besides, function takes the name for the output FASTA-file. If flanking regions are not annotated they named as unknown**N** where N is a serial number. 
-
-To start with the program run the following command:
-
-`select_genes_from_gbk_to_fasta(input_gbk, *genes, n_before, n_after, output_fasta)`
-
-Where:
-  - input_gbk: the name of gbk file to be processed. Must be in a string type
-
-  - *genes: names of any number of genes to be studied. Must be in a string type
-
-  - n_before: a number of upstream flanking genes (Optional)
-    
-    The argument is accepted in int type. By default n_before=1
-    
-    To find more flanking genes provide full name of argument
-    
-    Example: `n_before=2`
-
-  - n_after(int): a number of downstream flanking genes (Optional)
-    
-    The argument is accepted in int type. By default n_after=1
-    
-    To find more flanking genes provide full name of argument
-    
-    Example: `n_after=2`
-    
-  - output_fasta: the name for output file with obtained result (Optional)
-
-    By default output_fasta = 'result'
-
-    Must be in a string type. Argument output_fasta must be inputed without fasta extension.
-
-    Use full name of argument
-    
-    Example: `output_filename='processed_seqs'  # processed_seqs.fasta`
-
-#### Examples
-
-```python
-# Input
-# /gene="phrB"
-# /translation="MITHLVWFRQDLRLH"
-# /gene="dtpD"
-# /translation="MNKHASQPRAIYYVVALQ"
-# /gene="ybgI"
-# /translation="MKNTELEQLINEKLNSAAISDYAPN"
-
-select_genes_from_gbk_to_fasta(input_gbk, 'dtpD', output_fasta='selected_genes')
-
-# Ouput file selected_genes.fasta
-# >gene phrB
-# MITHLVWFRQDLRLH
-# >gene ybgI
-# MKNTELEQLINEKLNSAAISDYAPN
-```
-
-#### Troubleshooting
-
-|  Type of the problem                                             |  Probable cause
-| ------------------------------------------------------------ |--------------------
-| ValueError: File with such name exists! Change output_fasta arg! | File with such name exists in current directory
-
-
-## Contacts 
-
-**Ekaterina Shitik** (shitik.ekaterina@gmail.com)
-
-Doctor of medicine, molecular biologist with the main interests on gene engineering, AAV vectors and CRISPR/Cas9 technologies
-
-**Vladimir Grigoriants** (vova.grig2002@gmail.com)
-
-Bioinformatician, immunologist, MiLaborary inc. TCR-libraries QC developer 
-
-**Vlada Tuliavko** (vladislavi2742@gmail.com)
-
-MiLaboratory inc. manager&designer, immunologist
-
-Enjoy your use! ✨✨
+They are the best teachers ever✨✨
