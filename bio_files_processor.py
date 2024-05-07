@@ -210,7 +210,7 @@ class OpenFasta:
         except StopIteration:
             return FastaRecord('', '', '')
 
-    def read_records(self) -> list:
+    def read_records(self) -> list[FastaRecord]:
         """
         The function collect all fasta records from
         a fasta file
