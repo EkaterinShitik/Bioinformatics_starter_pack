@@ -99,11 +99,11 @@ class RandomForestClassifierCustom(BaseEstimator):
         Args:
             X: features
             n_jobs: the number of processes
-            or flows
-            is_process: parallel processes or flows
+            or threads
+            is_process: parallel processes or threads
             By default is_process=True
             In case of is_process=False the run
-            will be parallelized in flows
+            will be parallelized in threads
 
         Returns:
             array of predicted probabilities
@@ -126,11 +126,11 @@ class RandomForestClassifierCustom(BaseEstimator):
         Args:
             X: features
             n_jobs: the number of processes
-            or flows
-            is_process: parallel processes or flows
+            or threads
+            is_process: parallel processes or threads
             By default is_process=True
             In case of is_process=False the run
-            will be parallelized in flows
+            will be parallelized in threads
 
         Returns:
             array of obtained labels in
