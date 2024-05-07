@@ -216,7 +216,4 @@ class OpenFasta:
         a fasta file
         :return: list of fasta records
         """
-        list_records = []
-        for record in self.__iter__():
-            list_records += [record]
-        return list_records
+        return list(self)
