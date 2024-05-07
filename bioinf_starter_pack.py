@@ -533,22 +533,18 @@ def run_genscan(sequence=None,
     from 1, cds_list is 0-based.
     """
     url = 'http://hollywood.mit.edu/cgi-bin/genscanw_py.cgi'
+    data = {'-o': organism,
+            '-e': exon_cutoff,
+            '-n': sequence_name,
+            '-p': 'Predicted peptides only'}
     if sequence_file:
         with open(sequence_file, 'rb') as file:
             content = file.read()
-        data = {'-o': organism,
-                '-e': exon_cutoff,
-                '-n': sequence_name,
-                '-p': 'Predicted peptides only'}
         files = {'-u': content}
-        response = requests.post(url, data=data, files=files)
     else:
-        data = {'-o': organism,
-                '-e': exon_cutoff,
-                '-n': sequence_name,
-                '-s': sequence,
-                '-p': 'Predicted peptides only'}
-        response = requests.post(url, data=data)
+        data['-s'] = sequence
+        files = None
+    response = requests.post(url, data=data, files=files)
     status = response.status_code
     soup = BeautifulSoup(response.content, 'html.parser')
     output = soup.find_all('pre')[0].text
