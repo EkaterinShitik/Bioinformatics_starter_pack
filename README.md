@@ -1,7 +1,7 @@
 # Bioinformatics_starter_pack
 Bioinformatic_starter_pack contains programs that were written while doing home tasks in Python course in [Bioinformatics Institute](https://bioinf.me/en).
 <br/><br/> 
-![Image alt](https://github.com/EkaterinShitik/the-second-repository/raw/main/image_python_rep.png)
+![Image alt](imgs/image.png)
 <br/><br/> 
 The examples of running some programs that are highlighted with * are presented in `Showcases.ipynb`
 
