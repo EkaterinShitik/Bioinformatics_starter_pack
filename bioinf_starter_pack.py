@@ -376,7 +376,7 @@ def filter_fastq(input_path: str,
         output_filename = output_filename + '.fastq'
     current_directory = os.getcwd()
     path = os.path.join(current_directory, 'fastq_filtrator_results')
-    if not (os.path.exists(path)):
+    if not os.path.exists(path):
         os.mkdir(path)
     output_path = os.path.join(path, output_filename)
     if os.path.exists(output_path):
